@@ -1,0 +1,76 @@
+---
+const pillars = [
+  {
+    num: '01',
+    title: 'Pensão Completa',
+    desc: 'Café da manhã, almoço e jantar com gastronomia regional baiana feita com ingredientes da própria fazenda. Cada refeição é uma celebração da cultura local.',
+  },
+  {
+    num: '02',
+    title: 'Acomodações Confortáveis',
+    desc: 'Quartos standard e bangalôs mezanino com ar-condicionado, roupa de cama e toalhas incluídas. Descanso com o conforto que sua família merece.',
+  },
+  {
+    num: '03',
+    title: 'Piscina & Lazer',
+    desc: 'Piscina com área de descanso, jogos e espaços de convivência para toda a família curtir. O lugar perfeito para relaxar em meio à natureza baiana.',
+  },
+];
+
+const secondary = [
+  {
+    title: 'Monitoria Infantil',
+    desc: 'Equipe dedicada de monitores cuida das crianças com gincanas, passeios de charrete e atividades ao ar livre — os adultos descansam de verdade.',
+  },
+  {
+    title: 'WiFi & Infraestrutura',
+    desc: 'Internet sem fio em todas as áreas, estacionamento gratuito e seguro para toda a sua família.',
+  },
+  {
+    title: 'Auditório & Eventos',
+    desc: 'Espaço para 100 pessoas — ideal para retiros corporativos, workshops e celebrações em meio à natureza.',
+  },
+];
+---
+
+<section id="amenidades" class="py-24 bg-primary-dark text-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <span class="section-eyebrow text-accent-light">O que nos torna especial</span>
+      <h2 class="font-serif text-4xl sm:text-5xl text-white mt-3 mb-5">
+        Tudo para uma estada inesquecível
+      </h2>
+      <div class="decorative-rule mx-auto"></div>
+    </div>
+
+    <!-- 3 pilares principais -->
+    <div class="grid lg:grid-cols-3 gap-8 lg:gap-12 mb-16">
+      {pillars.map((item) => (
+        <div class="flex flex-col">
+          <span class="serif-numeral mb-4">{item.num}</span>
+          <h3 class="font-serif text-xl text-white mb-3">{item.title}</h3>
+          <p class="text-white/65 text-sm leading-relaxed">{item.desc}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Divisória -->
+    <div class="border-t border-white/10 mb-12"></div>
+
+    <!-- 3 features secundárias -->
+    <div class="grid sm:grid-cols-3 gap-8">
+      {secondary.map((item) => (
+        <div class="flex items-start gap-4">
+          <div class="w-6 h-0.5 bg-accent-light mt-2.5 shrink-0"></div>
+          <div>
+            <h4 class="font-sans font-semibold text-white text-sm mb-1">{item.title}</h4>
+            <p class="text-white/55 text-xs leading-relaxed">{item.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>

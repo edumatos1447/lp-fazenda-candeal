@@ -1,0 +1,22 @@
+---
+import LeadForm from './LeadForm';
+
+const apiBase = import.meta.env.PUBLIC_API_BASE_URL || '';
+const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER || '5571999990000';
+---
+
+<section id="reserva" class="py-24 bg-parchment">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12">
+      <span class="section-eyebrow">Reservas</span>
+      <h2 class="font-serif text-4xl sm:text-5xl text-ink mt-3 mb-4">
+        Garanta sua data
+      </h2>
+      <p class="text-text-muted text-lg max-w-xl mx-auto font-sans leading-relaxed">
+        Selecione o período, preencha seus dados e nossa equipe confirma tudo via WhatsApp em até 24h.
+      </p>
+    </div>
+
+    <LeadForm client:load apiBase={apiBase} whatsappNumber={whatsappNumber} />
+  </div>
+</section>

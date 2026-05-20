@@ -1,0 +1,30 @@
+---
+const youtubeId = import.meta.env.PUBLIC_YOUTUBE_VSL_ID;
+---
+
+{youtubeId && (
+  <section class="py-20 bg-bg-dark">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <span class="section-eyebrow mb-3 block">Vídeo</span>
+        <h2 class="font-serif text-3xl sm:text-4xl text-ink mb-4">
+          Conheça a Fazenda Candeal
+        </h2>
+        <p class="text-text-muted text-lg max-w-xl mx-auto">
+          Veja como é a experiência de se hospedar aqui e por que tantas famílias voltam todo ano.
+        </p>
+      </div>
+
+      <div class="relative aspect-video rounded-xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.18)]">
+        <iframe
+          src={`https://www.youtube.com/embed/${youtubeId}?rel=0&modestbranding=1`}
+          title="Fazenda Hotel Candeal — Conheça nossa fazenda"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          class="absolute inset-0 w-full h-full border-0"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+)}

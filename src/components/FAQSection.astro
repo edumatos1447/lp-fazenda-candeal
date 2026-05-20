@@ -1,0 +1,61 @@
+---
+const faqs = [
+  {
+    q: 'O que está incluído na hospedagem?',
+    a: 'Todas as refeições (café da manhã, almoço e jantar) com gastronomia regional, acesso à piscina, trilhas guiadas e atividades de lazer. Apenas bebidas alcoólicas são à parte.',
+  },
+  {
+    q: 'Como funciona o processo de reserva?',
+    a: 'Você preenche o formulário na página, escolhe o período desejado e é redirecionado para o WhatsApp. Nossa equipe confirma a disponibilidade e envia as instruções de pagamento em até 24h.',
+  },
+  {
+    q: 'Crianças pagam integral?',
+    a: 'Crianças até 3 anos não pagam. Dos 4 aos 10 anos há um valor especial reduzido. Consulte os preços específicos na seleção de período.',
+  },
+  {
+    q: 'A Fazenda fica longe de Salvador?',
+    a: 'Estamos em Conceição do Jacuípe — a aproximadamente 80 km de Salvador (cerca de 1h15 de carro) e 30 km de Feira de Santana (cerca de 30 minutos). Temos estacionamento gratuito.',
+  },
+  {
+    q: 'Posso levar pets?',
+    a: 'Consulte nossa equipe via WhatsApp sobre a política de pets. Alguns períodos e acomodações têm regras específicas.',
+  },
+  {
+    q: 'Há Wi-Fi na fazenda?',
+    a: 'Sim, temos Wi-Fi em todas as áreas comuns e acomodações. Nossa filosofia é de desconexão com o digital e conexão com a natureza, mas a internet está disponível.',
+  },
+];
+---
+
+<section id="faq" class="py-20 bg-parchment-dark">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14">
+      <span class="section-eyebrow mb-3 block">Dúvidas frequentes</span>
+      <h2 class="font-serif text-3xl sm:text-4xl text-ink mb-4">Perguntas frequentes</h2>
+    </div>
+
+    <div class="space-y-4">
+      {faqs.map((faq, i) => (
+        <details class="group bg-white/80 rounded-xl border border-[#d4cfc6] shadow-sm">
+          <summary class="flex items-center justify-between gap-4 cursor-pointer px-6 py-5 list-none font-semibold text-text">
+            <span>{faq.q}</span>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="shrink-0 text-primary transition-transform duration-300 group-open:rotate-180"
+            >
+              <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </summary>
+          <div class="px-6 pb-5 text-text-muted text-sm leading-relaxed">
+            {faq.a}
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,122 @@
+---
+const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER || '5571999990000';
+const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Olá! Tenho interesse em fazer uma reserva na Fazenda Hotel Candeal.')}`;
+---
+
+<section id="hero" class="relative min-h-[95vh] flex flex-col bg-primary-dark overflow-hidden">
+  <!-- Textura orgânica (sem padrão geométrico) -->
+  <div
+    class="absolute inset-0 pointer-events-none"
+    style="background-image: radial-gradient(ellipse at 20% 60%, rgba(255,255,255,0.04) 0%, transparent 55%), radial-gradient(ellipse at 85% 15%, rgba(183,121,31,0.10) 0%, transparent 50%);"
+  ></div>
+
+  <!-- Overlay de imagem real (quando disponível) -->
+  <!-- <img src="/images/hero.jpg" alt="Fazenda Hotel Candeal" class="absolute inset-0 w-full h-full object-cover opacity-40" /> -->
+
+  <!-- Conteúdo principal -->
+  <div class="relative z-10 flex-1 flex items-center">
+    <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 py-16 lg:py-24">
+      <div class="grid lg:grid-cols-[58fr_42fr] gap-8 lg:gap-16 items-center">
+
+        <!-- COLUNA ESQUERDA: headline + CTAs -->
+        <div class="flex flex-col items-start">
+          <!-- Localização -->
+          <div class="flex items-center gap-2 text-white/70 text-sm mb-6">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-accent-light shrink-0">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            <span>Conceição do Jacuípe, Bahia</span>
+          </div>
+
+          <h1 class="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-[1.05] mb-6">
+            Uma experiência de fazenda que sua família <em class="not-italic text-accent-light">não vai esquecer</em>
+          </h1>
+
+          <p class="text-white/75 text-lg leading-relaxed mb-10 max-w-lg">
+            Gastronomia regional com pensão completa, natureza preservada,
+            trilhas, piscina e muito conforto a poucos quilômetros de Salvador.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a
+              href="#reserva"
+              class="inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 text-white font-bold px-8 py-4 rounded-lg text-base transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            >
+              Ver datas disponíveis
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 border border-white/30 hover:border-white/60 hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-lg text-base transition-all duration-200"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+              Tirar dúvidas
+            </a>
+          </div>
+        </div>
+
+        <!-- COLUNA DIREITA: glass card com incluso + CTA -->
+        <div class="flex items-center justify-center lg:justify-end">
+          <div class="w-full max-w-sm bg-white/12 backdrop-blur-md border border-white/25 rounded-xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
+            <!-- Header do card -->
+            <div class="bg-accent/90 px-7 py-4">
+              <p class="font-serif text-white text-xl font-bold leading-tight">Tudo incluso na sua estada</p>
+              <p class="text-white/80 text-xs mt-1">Pensão completa + lazer + natureza</p>
+            </div>
+            <!-- Lista de itens -->
+            <div class="px-7 py-5">
+              <ul class="space-y-4">
+                {[
+                  { icon: '🍽️', text: 'Café da manhã, almoço e jantar' },
+                  { icon: '🏊', text: 'Piscina & área de lazer' },
+                  { icon: '👧', text: 'Monitoria infantil inclusa' },
+                  { icon: '🌿', text: 'Trilhas e atividades na natureza' },
+                  { icon: '🛏️', text: 'Quarto com AC, frigobar e TV' },
+                ].map((item) => (
+                  <li class="flex items-center gap-3 text-white text-sm font-medium">
+                    <span class="text-base shrink-0">{item.icon}</span>
+                    {item.text}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="#reserva"
+                class="mt-6 block w-full bg-white text-primary-dark text-center font-bold px-6 py-4 rounded-lg text-sm transition-all duration-200 hover:bg-accent hover:text-white shadow-md"
+              >
+                Ver datas e reservar →
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Strip inferior: trust stats -->
+  <div class="relative z-10 border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-3 divide-x divide-white/10 text-center py-4 sm:py-5">
+        <div class="px-2 sm:px-4">
+          <p class="font-serif text-accent-light text-base sm:text-lg font-bold">80 km</p>
+          <p class="text-white/55 text-[10px] sm:text-xs uppercase tracking-wide mt-0.5">de Salvador</p>
+        </div>
+        <div class="px-2 sm:px-4">
+          <p class="font-serif text-accent-light text-base sm:text-lg font-bold">30 km</p>
+          <p class="text-white/55 text-[10px] sm:text-xs uppercase tracking-wide mt-0.5">de Feira de Santana</p>
+        </div>
+        <div class="px-2 sm:px-4">
+          <p class="font-serif text-accent-light text-base sm:text-lg font-bold">3 refeições</p>
+          <p class="text-white/55 text-[10px] sm:text-xs uppercase tracking-wide mt-0.5">por dia incluídas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

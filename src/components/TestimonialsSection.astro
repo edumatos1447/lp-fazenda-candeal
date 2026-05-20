@@ -1,0 +1,99 @@
+---
+const testimonials = [
+  {
+    name: 'Cris Gomes',
+    location: 'Salvador, BA',
+    text: 'Fomos em família e foi incrível! As crianças adoraram os animais, as gincanas e os passeios de charrete. A comida é maravilhosa — regional e farta. Voltamos todo ano.',
+    initials: 'CG',
+  },
+  {
+    name: 'Tatiane Oliveira',
+    location: 'Feira de Santana, BA',
+    text: 'Lugar perfeito para descansar. A equipe de monitores é excepcional, super dedicada às crianças. Os adultos conseguem relaxar de verdade enquanto os pequenos se divertem.',
+    initials: 'TO',
+  },
+  {
+    name: 'Rodrigo Mendes',
+    location: 'São Paulo, SP',
+    text: 'Vim para um retiro corporativo e superou as expectativas. Ótima estrutura, refeições deliciosas e uma energia que só a natureza baiana proporciona. Time adorou!',
+    initials: 'RM',
+  },
+  {
+    name: 'Ana Paula Souza',
+    location: 'Aracaju, SE',
+    text: 'Fizemos o Day Use primeiro e não resistimos — voltamos para a hospedagem completa. Bangalô aconchegante, jantares especiais, rede na varanda. Simplesmente perfeito.',
+    initials: 'AP',
+  },
+];
+
+const [featured, ...rest] = testimonials;
+---
+
+<section class="py-24 bg-bg">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <span class="section-eyebrow">Depoimentos</span>
+      <h2 class="font-serif text-4xl sm:text-5xl text-ink mt-3 mb-5">
+        O que dizem nossos hóspedes
+      </h2>
+      <div class="decorative-rule mx-auto"></div>
+    </div>
+
+    <!-- Depoimento em destaque -->
+    <div class="relative mb-14 px-4 sm:px-10">
+      <span class="font-serif text-[5rem] sm:text-[7rem] leading-none text-accent/15 absolute -top-4 -left-2 select-none pointer-events-none">"</span>
+      <blockquote class="relative z-10">
+        <p class="font-sans text-lg sm:text-xl text-ink leading-relaxed mb-7">
+          "{featured.text}"
+        </p>
+        <footer class="flex items-center gap-4 flex-wrap">
+          <div class="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold shrink-0">
+            {featured.initials}
+          </div>
+          <div>
+            <cite class="font-sans font-semibold text-ink text-sm not-italic block">{featured.name}</cite>
+            <p class="font-sans text-text-muted text-xs">{featured.location}</p>
+          </div>
+          <div class="flex gap-0.5 text-accent ml-auto text-lg" aria-label="5 estrelas">
+            ★★★★★
+          </div>
+        </footer>
+      </blockquote>
+    </div>
+
+    <!-- Divisória -->
+    <div class="border-t border-divider mb-12"></div>
+
+    <!-- 3 depoimentos menores -->
+    <div class="grid sm:grid-cols-3 gap-8 mb-14">
+      {rest.map((t) => (
+        <div class="flex flex-col">
+          <span class="font-serif text-4xl text-accent/25 leading-none mb-3">"</span>
+          <p class="font-sans text-text-muted text-sm leading-relaxed flex-1 mb-5">"{t.text}"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-primary/80 flex items-center justify-center text-white text-xs font-bold shrink-0">
+              {t.initials}
+            </div>
+            <div>
+              <p class="font-sans font-semibold text-ink text-sm leading-tight">{t.name}</p>
+              <p class="font-sans text-text-muted text-xs">{t.location}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Badge avaliação -->
+    <div class="flex justify-center">
+      <div class="inline-flex items-center gap-3 bg-[#003580] text-white rounded-lg px-6 py-3 text-sm font-medium">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        4,5 de 5 — Avaliação excelente no TripAdvisor
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,150 @@
+---
+const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER || '5571999990000';
+const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Olá! Gostaria de saber mais sobre as acomodações da Fazenda Hotel Candeal e fazer uma reserva.')}`;
+
+const rooms = [
+  {
+    name: 'Mezanino',
+    badge: '4 unidades',
+    tagline: 'Ideal para famílias com crianças',
+    image: 'https://fazendacandeal.com.br/wp-content/uploads/2020/11/24102020_Fazenda_454.jpg',
+    imageAlt: 'Interior do quarto Mezanino — andar inferior com escada e camas solteiro',
+    capacity: 'Até 6 pessoas',
+    capacityDetail: '(máx. 4 adultos + 2 crianças)',
+    features: [
+      '1 cama casal no mezanino superior',
+      '2 camas solteiro + 2 bicamas no térreo',
+      'Banheiro no andar térreo',
+      'Split AC, frigobar e TV digital',
+      'Varanda com rede e esteira',
+    ],
+    highlight: true,
+  },
+  {
+    name: 'Standard',
+    badge: '8 unidades',
+    tagline: 'Perfeito para casais e pequenas famílias',
+    image: 'https://fazendacandeal.com.br/wp-content/uploads/2020/11/25102020_Fazenda_799.jpg',
+    imageAlt: 'Varanda do quarto Standard com rede artesanal',
+    capacity: 'Até 4 pessoas',
+    capacityDetail: '(máx. 3 adultos + 1 criança)',
+    features: [
+      '1 cama casal + 1 cama solteiro + 1 bicama',
+      'Split AC, frigobar e TV digital',
+      'Varanda com rede e esteira',
+      '1 unidade adaptada para acessibilidade',
+    ],
+    highlight: false,
+  },
+  {
+    name: 'Bangalô',
+    badge: '4 unidades',
+    tagline: 'Mais privacidade e contato com a natureza',
+    image: 'https://fazendacandeal.com.br/wp-content/uploads/2023/05/24102020_Fazenda_481.jpg',
+    imageAlt: 'Varanda do Bangalô com rede e natureza ao redor',
+    capacity: 'Até 4 pessoas',
+    capacityDetail: '(máx. 3 adultos + 1 criança)',
+    features: [
+      'Chalés independentes (~50m do village)',
+      '2 chalés com 2 bangalôs cada',
+      'Split AC, frigobar e TV digital',
+      'Varanda privativa com rede e esteira',
+      '2 unidades com banheiro adaptado',
+    ],
+    highlight: false,
+  },
+];
+---
+
+<section id="acomodacoes" class="py-24 bg-parchment">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+    <!-- Header -->
+    <div class="text-center mb-14">
+      <span class="section-eyebrow">Acomodações</span>
+      <h2 class="font-serif text-4xl sm:text-5xl text-ink mt-3 mb-4">
+        Escolha sua acomodação
+      </h2>
+      <p class="text-text-muted text-lg max-w-xl mx-auto font-sans leading-relaxed">
+        Todas as opções incluem pensão completa, varanda com rede e muito conforto em plena natureza baiana.
+      </p>
+      <div class="decorative-rule mx-auto mt-6"></div>
+    </div>
+
+    <!-- Cards de quartos -->
+    <div class="grid lg:grid-cols-3 gap-6 mb-10">
+      {rooms.map((room) => (
+        <div class={`rounded-xl overflow-hidden border flex flex-col ${room.highlight ? 'border-accent shadow-[0_4px_24px_rgba(183,121,31,0.18)]' : 'border-[#d4cfc6] shadow-[0_2px_16px_rgba(0,0,0,0.08)]'} bg-white`}>
+
+          {/* Badge "Mais escolhido" */}
+          {room.highlight && (
+            <div class="bg-accent text-white text-xs font-bold text-center py-2 uppercase tracking-wider font-sans">
+              Mais escolhido pelas famílias
+            </div>
+          )}
+
+          {/* Imagem */}
+          <div class="relative aspect-[4/3] overflow-hidden bg-primary-dark/10">
+            <img
+              src={room.image}
+              alt={room.imageAlt}
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
+            <div class="absolute top-3 left-3">
+              <span class="bg-black/50 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full font-sans">
+                {room.badge}
+              </span>
+            </div>
+          </div>
+
+          {/* Conteúdo */}
+          <div class="p-6 flex flex-col flex-1">
+            <h3 class="font-serif text-2xl text-ink mb-1">{room.name}</h3>
+            <p class="text-accent text-sm font-sans font-medium mb-4">{room.tagline}</p>
+
+            {/* Capacidade */}
+            <div class="flex items-center gap-2 mb-4 pb-4 border-b border-[#e8e2d8]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-primary shrink-0">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              </svg>
+              <div>
+                <span class="font-sans font-semibold text-ink text-sm">{room.capacity}</span>
+                <span class="font-sans text-text-muted text-xs ml-1">{room.capacityDetail}</span>
+              </div>
+            </div>
+
+            {/* Features */}
+            <ul class="space-y-2 flex-1 mb-6">
+              {room.features.map((f) => (
+                <li class="flex items-start gap-2 text-sm font-sans text-text-muted">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-primary shrink-0 mt-0.5">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href="#reserva"
+              class={`block w-full text-center font-bold py-3 rounded-lg text-sm transition-all duration-200 font-sans ${room.highlight ? 'bg-accent hover:bg-accent/90 text-white shadow-md' : 'bg-primary hover:bg-primary-dark text-white'}`}
+            >
+              Reservar {room.name}
+            </a>
+          </div>
+
+        </div>
+      ))}
+    </div>
+
+    <!-- Nota de rodapé -->
+    <p class="text-center text-text-muted text-sm font-sans">
+      Dúvidas sobre qual acomodação escolher?{' '}
+      <a href={waUrl} target="_blank" rel="noopener noreferrer" class="text-primary underline underline-offset-4 hover:text-primary-dark">
+        Fale com a gente no WhatsApp
+      </a>
+    </p>
+
+  </div>
+</section>

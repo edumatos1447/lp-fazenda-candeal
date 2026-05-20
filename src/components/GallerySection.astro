@@ -1,0 +1,71 @@
+---
+const photos = [
+  {
+    src: 'https://fazendacandeal.com.br/wp-content/uploads/2020/11/24102020_Fazenda_461.jpg',
+    alt: 'Vista panorâmica das acomodações da Fazenda Hotel Candeal',
+    aspect: 'aspect-[4/3]',
+  },
+  {
+    src: 'https://fazendacandeal.com.br/wp-content/uploads/2020/11/24102020_Fazenda_485.jpg',
+    alt: 'Varanda com rede e jardim — Fazenda Hotel Candeal',
+    aspect: 'aspect-square',
+  },
+  {
+    src: 'https://fazendacandeal.com.br/wp-content/uploads/2020/11/24102020_Fazenda_454.jpg',
+    alt: 'Interior do quarto Mezanino com escada e camas solteiro',
+    aspect: 'aspect-[3/4]',
+  },
+  {
+    src: 'https://fazendacandeal.com.br/wp-content/uploads/2023/05/24102020_Fazenda_330.jpg',
+    alt: 'Jardim florido em frente às acomodações',
+    aspect: 'aspect-[4/3]',
+  },
+  {
+    src: 'https://fazendacandeal.com.br/wp-content/uploads/2020/11/25102020_Fazenda_799.jpg',
+    alt: 'Varanda com rede artesanal — Standard ou Bangalô',
+    aspect: 'aspect-square',
+  },
+  {
+    src: 'https://fazendacandeal.com.br/wp-content/uploads/2023/05/24102020_Fazenda_481.jpg',
+    alt: 'Varanda do Bangalô com rede e natureza ao redor',
+    aspect: 'aspect-[4/3]',
+  },
+];
+---
+
+<section id="galeria" class="py-20 bg-bg-dark">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14">
+      <span class="section-eyebrow mb-3 block">Galeria</span>
+      <h2 class="font-serif text-3xl sm:text-4xl text-ink mb-4">
+        Conheça cada cantinho
+      </h2>
+      <p class="text-text-muted text-lg max-w-xl mx-auto">
+        Natureza, conforto e momentos que ficam na memória.
+      </p>
+    </div>
+
+    <div class="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+      {photos.map((photo) => (
+        <div class={`break-inside-avoid rounded-xl overflow-hidden bg-primary-dark/20 ${photo.aspect} relative`}>
+          {photo.src ? (
+            <img
+              src={photo.src}
+              alt={photo.alt}
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
+          ) : (
+            /* Placeholder até adicionar fotos reais */
+            <div class="w-full h-full min-h-[200px] flex flex-col items-center justify-center gap-2 text-primary/40">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+              </svg>
+              <span class="text-xs text-center px-4">{photo.alt}</span>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
