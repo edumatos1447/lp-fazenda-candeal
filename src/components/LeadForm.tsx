@@ -498,7 +498,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
       if (!sheetsWebhookUrl) return;
       fetch(sheetsWebhookUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        mode: 'no-cors',
         body: JSON.stringify({
           timestamp: new Date().toISOString(),
           nome,
