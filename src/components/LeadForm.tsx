@@ -39,6 +39,14 @@ function formatCurrency(value: number) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+function formatPhone(value: string) {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length === 0) return '';
+  if (digits.length <= 2) return `(${digits}`;
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
 function buildWhatsAppMessage(
   period: Period,
   nome: string,
@@ -762,7 +770,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
               required
               placeholder="(71) 99999-0000"
               value={telefone}
-              onChange={(e) => setTelefone(e.target.value)}
+              onChange={(e) => setTelefone(formatPhone(e.target.value))}
               onBlur={handleTelefoneBlur}
               className={inputClass}
             />
@@ -800,10 +808,11 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
                       type="number"
                       min={0}
                       max={17}
-                      value={idade}
+                      value={idade === 0 ? '' : idade}
                       onChange={(e) => {
                         const next = [...idadesCriancas];
-                        next[i] = Number(e.target.value);
+                        const raw = e.target.value;
+                        next[i] = raw === '' ? 0 : Math.min(17, Math.max(0, parseInt(raw, 10) || 0));
                         setIdadesCriancas(next);
                       }}
                       className={inputClass}

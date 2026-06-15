@@ -1,28 +1,30 @@
 ---
 const testimonials = [
   {
-    name: 'Cris Gomes',
-    location: 'Salvador, BA',
-    text: 'Fomos em família e foi incrível! As crianças adoraram os animais, as gincanas e os passeios de charrete. A comida é maravilhosa — regional e farta. Voltamos todo ano.',
-    initials: 'CG',
+    name: 'Manoel Vitor',
+    title: 'Ideal para crianças',
+    text: 'Local maravilhoso para as crianças. Bastante área verde e diversos brinquedos. Possuem atrações programadas durante a estadia, incluindo passeios pela fazenda e brincadeiras, todas com a presença de monitoria. Comida saborosa e diversificada. Ideal para famílias. Além disso, a história da fazenda, com a presença da Sra. Amabília Almeida, torna a experiência ainda mais interessante.',
+    initials: 'MV',
   },
   {
-    name: 'Tatiane Oliveira',
-    location: 'Feira de Santana, BA',
-    text: 'Lugar perfeito para descansar. A equipe de monitores é excepcional, super dedicada às crianças. Os adultos conseguem relaxar de verdade enquanto os pequenos se divertem.',
-    initials: 'TO',
+    name: 'Claudiane',
+    text: 'Bastante espaço verde e com segurança para as crianças brincarem à vontade.',
+    initials: 'CL',
   },
   {
-    name: 'Rodrigo Mendes',
-    location: 'São Paulo, SP',
-    text: 'Vim para um retiro corporativo e superou as expectativas. Ótima estrutura, refeições deliciosas e uma energia que só a natureza baiana proporciona. Time adorou!',
-    initials: 'RM',
+    name: 'Larissa',
+    text: 'Excelente hotel fazenda, com muitas atividades pras crianças! A comida é muito saborosa e diversificada. A animação é excelente, com Dedêra, as crianças se divertiram o dia todo! O futebol de sabão e o parque aquático são muito divertidos! O contato com os animais é muito bom pras crianças. Tudo muito bem cuidado! O parquinho de areia e a brinquedoteca perto do restaurante são ótimos!',
+    initials: 'LA',
   },
   {
-    name: 'Ana Paula Souza',
-    location: 'Aracaju, SE',
-    text: 'Fizemos o Day Use primeiro e não resistimos — voltamos para a hospedagem completa. Bangalô aconchegante, jantares especiais, rede na varanda. Simplesmente perfeito.',
-    initials: 'AP',
+    name: 'Juliana',
+    text: 'Quartos limpos, roupas de cama e toalhas limpas e cheirosas. Bom espaço.',
+    initials: 'JU',
+  },
+  {
+    name: 'Araujo',
+    text: 'Fomos tratados como se fôssemos da família, comida deliciosa, bom espaço para as crianças brincarem, os quartos limpos diariamente, com certeza voltaremos em breve.',
+    initials: 'AR',
   },
 ];
 
@@ -54,7 +56,7 @@ const [featured, ...rest] = testimonials;
           </div>
           <div>
             <cite class="font-sans font-semibold text-ink text-sm not-italic block">{featured.name}</cite>
-            <p class="font-sans text-text-muted text-xs">{featured.location}</p>
+            {featured.title && <p class="font-sans text-text-muted text-xs">{featured.title}</p>}
           </div>
           <div class="flex gap-0.5 text-accent ml-auto text-lg" aria-label="5 estrelas">
             ★★★★★
@@ -66,10 +68,10 @@ const [featured, ...rest] = testimonials;
     <!-- Divisória -->
     <div class="border-t border-divider mb-12"></div>
 
-    <!-- 3 depoimentos menores -->
-    <div class="grid sm:grid-cols-3 gap-8 mb-14">
+    <!-- 4 depoimentos menores -->
+    <div class="grid sm:grid-cols-2 gap-8 mb-14">
       {rest.map((t, i) => (
-        <div class="reveal flex flex-col" data-delay={String(i + 1)}>
+        <div class="reveal flex flex-col" data-delay={String((i % 4) + 1)}>
           <span class="font-serif text-4xl text-accent/25 leading-none mb-3">"</span>
           <p class="font-sans text-text-muted text-sm leading-relaxed flex-1 mb-5">"{t.text}"</p>
           <div class="flex items-center gap-3">
@@ -78,7 +80,7 @@ const [featured, ...rest] = testimonials;
             </div>
             <div>
               <p class="font-sans font-semibold text-ink text-sm leading-tight">{t.name}</p>
-              <p class="font-sans text-text-muted text-xs">{t.location}</p>
+              <div class="flex gap-0.5 text-accent text-sm" aria-label="5 estrelas">★★★★★</div>
             </div>
           </div>
         </div>
@@ -91,7 +93,7 @@ const [featured, ...rest] = testimonials;
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
         </svg>
-        4,5 de 5 — Avaliação excelente no TripAdvisor
+        Avaliação excelente no Booking.com
       </div>
     </div>
 
