@@ -1,10 +1,11 @@
 ---
 const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER || '5571999990000';
-const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Olá! Gostaria de saber mais sobre as acomodações da Fazenda Hotel Candeal e fazer uma reserva.')}`;
+const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('[Site] Olá! Gostaria de saber mais sobre as acomodações da Fazenda Hotel Candeal e fazer uma reserva.')}`;
 
 const rooms = [
   {
     name: 'Mezanino',
+    roomKey: 'mezanino_bangalo',
     badge: '4 unidades',
     tagline: 'Ideal para famílias com crianças',
     image: 'https://fazendacandeal.com.br/wp-content/uploads/2020/11/24102020_Fazenda_454.jpg',
@@ -22,6 +23,7 @@ const rooms = [
   },
   {
     name: 'Standard',
+    roomKey: 'standard',
     badge: '8 unidades',
     tagline: 'Perfeito para casais e pequenas famílias',
     image: 'https://fazendacandeal.com.br/wp-content/uploads/2020/11/25102020_Fazenda_799.jpg',
@@ -38,6 +40,7 @@ const rooms = [
   },
   {
     name: 'Bangalô',
+    roomKey: 'mezanino_bangalo',
     badge: '4 unidades',
     tagline: 'Mais privacidade e contato com a natureza',
     image: 'https://fazendacandeal.com.br/wp-content/uploads/2023/05/24102020_Fazenda_481.jpg',
@@ -126,12 +129,14 @@ const rooms = [
               ))}
             </ul>
 
-            <a
-              href="#reserva"
-              class={`block w-full text-center font-bold py-3 rounded-lg text-sm transition-all duration-200 font-sans ${room.highlight ? 'bg-accent hover:bg-accent/90 text-white shadow-md' : 'bg-primary hover:bg-primary-dark text-white'}`}
+            <button
+              type="button"
+              data-room={room.roomKey}
+              onclick="document.dispatchEvent(new CustomEvent('candeal:room', {detail: this.dataset.room})); document.getElementById('reserva')?.scrollIntoView({behavior:'smooth'});"
+              class={`block w-full text-center font-bold py-3 rounded-lg text-sm transition-all duration-200 font-sans cursor-pointer ${room.highlight ? 'bg-accent hover:bg-accent/90 text-white shadow-md' : 'bg-primary hover:bg-primary-dark text-white'}`}
             >
               Reservar {room.name}
-            </a>
+            </button>
           </div>
 
         </div>

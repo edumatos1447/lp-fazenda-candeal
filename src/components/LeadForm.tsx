@@ -63,7 +63,7 @@ function buildWhatsAppMessage(
   };
 
   return [
-    'Olá! Tenho interesse em fazer uma reserva na Fazenda Hotel Candeal.',
+    '[Site] Olá! Tenho interesse em fazer uma reserva na Fazenda Hotel Candeal.',
     '',
     `*Período:* ${period.nome} (${formatDate(period.data_entrada)} a ${formatDate(period.data_saida)} · ${period.num_diarias} diária${period.num_diarias !== 1 ? 's' : ''})`,
     `*Nome:* ${nome}`,
@@ -407,6 +407,18 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
       .finally(() => setPeriodsLoading(false));
   }, [apiBase]);
 
+  // Escuta evento disparado pelos botões "Reservar quarto X" da seção de acomodações
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const room = (e as CustomEvent<string>).detail;
+      if (room === 'standard' || room === 'mezanino_bangalo') {
+        setTipoAcomodacao(room as TipoAcomodacao);
+      }
+    };
+    document.addEventListener('candeal:room', handler);
+    return () => document.removeEventListener('candeal:room', handler);
+  }, []);
+
   // Sincroniza o array de idades com qtdCriancas
   useEffect(() => {
     setIdadesCriancas((prev) => {
@@ -635,7 +647,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
               Não foi possível carregar as datas.
               <br />
               <a
-                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Olá! Gostaria de ver as datas disponíveis na Fazenda Candeal.')}`}
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('[Site] Olá! Gostaria de ver as datas disponíveis na Fazenda Candeal.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#2d6a4f] underline"
@@ -854,7 +866,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
               Ops, as vagas para este período acabaram. Selecione outro período ou{' '}
               <a
-                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Olá! Vi que o período que escolhi está sem vagas. Vocês têm outra opção?')}`}
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('[Site] Olá! Vi que o período que escolhi está sem vagas. Vocês têm outra opção?')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline font-medium"
@@ -870,7 +882,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
               Ocorreu um erro ao enviar.{' '}
               <a
-                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Olá! Tive um problema ao preencher o formulário e gostaria de fazer minha reserva.')}`}
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('[Site] Olá! Tive um problema ao preencher o formulário e gostaria de fazer minha reserva.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline font-medium"
