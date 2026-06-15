@@ -65,7 +65,7 @@ function buildWhatsAppMessage(
   return [
     'Olá! Tenho interesse em fazer uma reserva na Fazenda Hotel Candeal.',
     '',
-    `*Período:* ${period.nome} (${formatDate(period.data_entrada)} a ${formatDate(period.data_saida)})`,
+    `*Período:* ${period.nome} (${formatDate(period.data_entrada)} a ${formatDate(period.data_saida)} · ${period.num_diarias} diária${period.num_diarias !== 1 ? 's' : ''})`,
     `*Nome:* ${nome}`,
     `*Telefone:* ${telefone}`,
     `*E-mail:* ${email}`,
@@ -86,11 +86,19 @@ function MiniCalendar({
   selectedPeriodId,
   onSelect,
   category,
+  viewYear,
+  viewMonth,
+  onPrev,
+  onNext,
 }: {
   periods: Period[];
   selectedPeriodId: string;
   onSelect: (id: string) => void;
   category: Category;
+  viewYear: number;
+  viewMonth: number;
+  onPrev: () => void;
+  onNext: () => void;
 }) {
   if (periods.length === 0) {
     return (
@@ -100,23 +108,21 @@ function MiniCalendar({
     );
   }
 
-  const firstDate = new Date(periods[0].data_entrada + 'T12:00:00');
-  const year = firstDate.getFullYear();
-  const month = firstDate.getMonth();
-  const monthLabel = firstDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDayOfWeek = new Date(year, month, 1).getDay();
+  const monthLabel = new Date(viewYear, viewMonth, 1).toLocaleString('pt-BR', {
+    month: 'long',
+    year: 'numeric',
+  });
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
 
-  // Map available entry days → period
   const availableByDay = new Map<number, Period>();
   periods.forEach((p) => {
     const entry = new Date(p.data_entrada + 'T12:00:00');
-    if (entry.getFullYear() === year && entry.getMonth() === month) {
+    if (entry.getFullYear() === viewYear && entry.getMonth() === viewMonth) {
       availableByDay.set(entry.getDate(), p);
     }
   });
 
-  // Compute range for selected period
   const selectedPeriod = periods.find((p) => p.periodo_id === selectedPeriodId);
   const rangeDays = new Set<number>();
   let checkInDay: number | null = null;
@@ -125,26 +131,72 @@ function MiniCalendar({
   if (selectedPeriod) {
     const entry = new Date(selectedPeriod.data_entrada + 'T12:00:00');
     const exit = new Date(selectedPeriod.data_saida + 'T12:00:00');
-    checkInDay = entry.getDate();
 
+    if (entry.getFullYear() === viewYear && entry.getMonth() === viewMonth) {
+      checkInDay = entry.getDate();
+    }
     if (category === 'hotelaria') {
-      checkOutDay = exit.getDate();
+      if (exit.getFullYear() === viewYear && exit.getMonth() === viewMonth) {
+        checkOutDay = exit.getDate();
+      }
       for (let d = new Date(entry); d <= exit; d.setDate(d.getDate() + 1)) {
-        if (d.getMonth() === month) rangeDays.add(d.getDate());
+        if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
+          rangeDays.add(d.getDate());
+        }
       }
     } else {
-      rangeDays.add(entry.getDate());
+      if (entry.getFullYear() === viewYear && entry.getMonth() === viewMonth) {
+        rangeDays.add(entry.getDate());
+      }
     }
   }
+
+  // Todos os dias que pertencem a qualquer pacote no mês atual
+  const allPackageDays = new Set<number>();
+  periods.forEach((p) => {
+    const entry = new Date(p.data_entrada + 'T12:00:00');
+    const exit = new Date(p.data_saida + 'T12:00:00');
+    for (let d = new Date(entry); d <= exit; d.setDate(d.getDate() + 1)) {
+      if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
+        allPackageDays.add(d.getDate());
+      }
+    }
+  });
+
+  const hasPrev = periods.some((p) => {
+    const d = new Date(p.data_entrada + 'T12:00:00');
+    return d.getFullYear() < viewYear || (d.getFullYear() === viewYear && d.getMonth() < viewMonth);
+  });
+  const hasNext = periods.some((p) => {
+    const d = new Date(p.data_entrada + 'T12:00:00');
+    return d.getFullYear() > viewYear || (d.getFullYear() === viewYear && d.getMonth() > viewMonth);
+  });
 
   const blanks = Array(firstDayOfWeek).fill(null);
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   return (
     <div>
-      <p className="text-center text-sm font-semibold text-[#1c1a16] mb-3 capitalize">
-        {monthLabel}
-      </p>
+      {/* Navegação de mês */}
+      <div className="flex items-center justify-between mb-3">
+        <button
+          type="button"
+          onClick={onPrev}
+          disabled={!hasPrev}
+          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 disabled:opacity-25 disabled:cursor-default transition-colors text-xl leading-none"
+        >
+          ‹
+        </button>
+        <p className="text-sm font-semibold text-[#1c1a16] capitalize">{monthLabel}</p>
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={!hasNext}
+          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 disabled:opacity-25 disabled:cursor-default transition-colors text-xl leading-none"
+        >
+          ›
+        </button>
+      </div>
 
       {/* Headers de dia da semana */}
       <div className="grid grid-cols-7 text-center mb-1">
@@ -166,12 +218,12 @@ function MiniCalendar({
           const isCheckOut = day === checkOutDay && category === 'hotelaria';
           const inRange = rangeDays.has(day) && !isCheckIn && !isCheckOut;
           const isAvailable = !!period;
+          const inAnyPackage = allPackageDays.has(day) && !isCheckIn && !isCheckOut && !inRange && !isAvailable;
 
           let cls =
             'h-9 w-full text-xs flex items-center justify-center transition-colors select-none ';
 
           if (isCheckIn && isCheckOut) {
-            // Mesmo dia (day use de 1 dia)
             cls += 'bg-[#2d6a4f] text-white font-bold rounded-full ';
           } else if (isCheckIn) {
             cls += 'bg-[#2d6a4f] text-white font-bold rounded-l-full ';
@@ -181,7 +233,9 @@ function MiniCalendar({
             cls += 'bg-[#2d6a4f]/12 text-[#1b4332] font-medium ';
           } else if (isAvailable) {
             cls +=
-              'text-[#2d6a4f] font-semibold ring-1 ring-[#2d6a4f]/50 rounded-full hover:bg-[#2d6a4f]/10 cursor-pointer ';
+              'text-[#2d6a4f] font-semibold ring-2 ring-[#2d6a4f]/60 rounded-full hover:bg-[#2d6a4f]/10 cursor-pointer ';
+          } else if (inAnyPackage) {
+            cls += 'text-[#2d6a4f]/70 bg-[#2d6a4f]/[0.10] ';
           } else {
             cls += 'text-gray-300 cursor-default ';
           }
@@ -253,6 +307,8 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
   const [category, setCategory] = useState<Category>('hotelaria');
 
   const [selectedPeriodId, setSelectedPeriodId] = useState('');
+  const [viewYear, setViewYear] = useState(new Date().getFullYear());
+  const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
@@ -285,7 +341,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
           hora_entrada: '14:00',
           data_saida: '2026-07-12',
           hora_saida: '12:00',
-          num_diarias: 2,
+          num_diarias: 3,
           preco_casal_standard: 0,
           preco_casal_mezanino: 0,
           preco_crianca: 0,
@@ -300,7 +356,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
           hora_entrada: '14:00',
           data_saida: '2026-08-09',
           hora_saida: '12:00',
-          num_diarias: 2,
+          num_diarias: 3,
           preco_casal_standard: 0,
           preco_casal_mezanino: 0,
           preco_crianca: 0,
@@ -315,7 +371,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
           hora_entrada: '14:00',
           data_saida: '2026-08-23',
           hora_saida: '12:00',
-          num_diarias: 2,
+          num_diarias: 3,
           preco_casal_standard: 0,
           preco_casal_mezanino: 0,
           preco_crianca: 0,
@@ -325,7 +381,11 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
       ];
       setPeriods(mock);
       const firstHotelaria = mock.find((p) => p.tipo !== 'day_use');
-      setSelectedPeriodId(firstHotelaria?.periodo_id ?? mock[0].periodo_id);
+      const firstPeriod = firstHotelaria ?? mock[0];
+      setSelectedPeriodId(firstPeriod.periodo_id);
+      const d = new Date(firstPeriod.data_entrada + 'T12:00:00');
+      setViewYear(d.getFullYear());
+      setViewMonth(d.getMonth());
       setPeriodsLoading(false);
       return;
     }
@@ -334,8 +394,13 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
       .then((data: Period[]) => {
         setPeriods(data);
         const firstHotelaria = data.find((p) => p.tipo !== 'day_use');
-        if (firstHotelaria) setSelectedPeriodId(firstHotelaria.periodo_id);
-        else if (data.length > 0) setSelectedPeriodId(data[0].periodo_id);
+        const firstPeriod = firstHotelaria ?? data[0];
+        if (firstPeriod) {
+          setSelectedPeriodId(firstPeriod.periodo_id);
+          const d = new Date(firstPeriod.data_entrada + 'T12:00:00');
+          setViewYear(d.getFullYear());
+          setViewMonth(d.getMonth());
+        }
       })
       .catch(() => setPeriodsError(true))
       .finally(() => setPeriodsLoading(false));
@@ -356,7 +421,23 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
     const list = cat === 'hotelaria'
       ? periods.filter((p) => p.tipo !== 'day_use')
       : periods.filter((p) => p.tipo === 'day_use');
-    setSelectedPeriodId(list[0]?.periodo_id ?? '');
+    const first = list[0];
+    setSelectedPeriodId(first?.periodo_id ?? '');
+    if (first) {
+      const d = new Date(first.data_entrada + 'T12:00:00');
+      setViewYear(d.getFullYear());
+      setViewMonth(d.getMonth());
+    }
+  }
+
+  function handleCalPrev() {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear((y) => y - 1); }
+    else setViewMonth((m) => m - 1);
+  }
+
+  function handleCalNext() {
+    if (viewMonth === 11) { setViewMonth(0); setViewYear((y) => y + 1); }
+    else setViewMonth((m) => m + 1);
   }
 
   // Captura parcial silenciosa no onBlur do telefone
@@ -434,8 +515,10 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
             periodo: selectedPeriod.nome,
             data_entrada: selectedPeriod.data_entrada,
             data_saida: selectedPeriod.data_saida,
+            num_diarias: selectedPeriod.num_diarias,
             adultos: qtdAdultos,
             criancas: qtdCriancas,
+            idades_criancas: idadesCriancas.join(', ') || '',
             tipo_acomodacao: tipoAcomodacao,
             observacoes: observacoes || '',
             restricoes: restricoes || '',
@@ -560,30 +643,62 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
                 selectedPeriodId={selectedPeriodId}
                 onSelect={setSelectedPeriodId}
                 category={category}
+                viewYear={viewYear}
+                viewMonth={viewMonth}
+                onPrev={handleCalPrev}
+                onNext={handleCalNext}
               />
 
-              {/* Card de resumo do período selecionado */}
-              {selectedPeriod && (
-                <div className="mt-4 p-3.5 bg-[#f7f3eb] rounded-lg border border-[#d4cfc6]">
-                  <p className="font-semibold text-[#1c1a16] text-sm leading-snug mb-1">
-                    {selectedPeriod.nome}
+              {/* Lista de pacotes disponíveis */}
+              {activePeriods.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    Pacotes disponíveis
                   </p>
-                  <p className="text-xs text-gray-500 leading-relaxed">
-                    {category === 'hotelaria'
-                      ? `Entrada ${formatDate(selectedPeriod.data_entrada)} · Saída ${formatDate(selectedPeriod.data_saida)} · ${selectedPeriod.num_diarias} diária${selectedPeriod.num_diarias !== 1 ? 's' : ''}`
-                      : `${formatDate(selectedPeriod.data_entrada)} · Das ${selectedPeriod.hora_entrada} às ${selectedPeriod.hora_saida}`
-                    }
-                  </p>
-                  {category === 'hotelaria' && selectedPeriod.preco_casal_standard > 0 && (
-                    <p className="text-xs text-[#2d6a4f] font-semibold mt-1.5">
-                      A partir de {formatCurrency(selectedPeriod.preco_casal_standard)} / casal
-                    </p>
-                  )}
-                  {selectedPeriod.vagas_disponiveis <= 3 && (
-                    <span className="inline-block mt-2 text-[10px] font-bold text-[#b7791f] bg-[#b7791f]/10 rounded-full px-2 py-0.5">
-                      Últimas vagas!
-                    </span>
-                  )}
+                  {activePeriods.map((p) => {
+                    const isSelected = p.periodo_id === selectedPeriodId;
+                    return (
+                      <button
+                        key={p.periodo_id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedPeriodId(p.periodo_id);
+                          const d = new Date(p.data_entrada + 'T12:00:00');
+                          setViewYear(d.getFullYear());
+                          setViewMonth(d.getMonth());
+                        }}
+                        className={`w-full text-left rounded-lg border px-3.5 py-3 transition-all ${
+                          isSelected
+                            ? 'border-[#2d6a4f] bg-[#2d6a4f]/6 ring-1 ring-[#2d6a4f]/30'
+                            : 'border-[#d4cfc6] bg-white hover:border-[#2d6a4f]/40 hover:bg-[#f7f3eb]'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className={`text-sm font-semibold leading-snug ${isSelected ? 'text-[#1b4332]' : 'text-[#1c1a16]'}`}>
+                              {p.nome}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {category === 'hotelaria'
+                                ? `${formatDate(p.data_entrada)} → ${formatDate(p.data_saida)} · ${p.num_diarias} diária${p.num_diarias !== 1 ? 's' : ''}`
+                                : `${formatDate(p.data_entrada)} · ${p.hora_entrada} às ${p.hora_saida}`
+                              }
+                            </p>
+                          </div>
+                          {isSelected && (
+                            <svg className="flex-shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" strokeWidth="2.5">
+                              <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                          )}
+                        </div>
+                        {p.vagas_disponiveis <= 3 && (
+                          <span className="inline-block mt-1.5 text-[10px] font-bold text-[#b7791f] bg-[#b7791f]/10 rounded-full px-2 py-0.5">
+                            Últimas vagas!
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </>
