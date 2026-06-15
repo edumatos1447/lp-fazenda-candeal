@@ -1,0 +1,104 @@
+---
+const packages = [
+  {
+    tag: 'Julho',
+    nome: 'Bye Bye Férias',
+    datas: '10 a 12 de julho',
+    descricao: 'Encerre as férias de julho com a família em plena natureza baiana. Três dias de muito lazer, gastronomia e descanso.',
+    badge: 'Férias de Julho',
+    highlight: true,
+  },
+  {
+    tag: 'Agosto',
+    nome: 'Dia dos Pais',
+    datas: '7 a 9 de agosto',
+    descricao: 'O presente que o pai merece: uma escapada inesquecível com pensão completa, piscina e trilhas para toda a família.',
+    badge: 'Dia dos Pais',
+    highlight: false,
+  },
+  {
+    tag: 'Agosto',
+    nome: 'Festival de Inverno',
+    datas: '21 a 23 de agosto',
+    descricao: 'Aproveite o inverno baiano com programação especial, noites frescas e o melhor da cultura regional em família.',
+    badge: 'Festival de Inverno',
+    highlight: false,
+  },
+];
+---
+
+<section id="pacotes" class="py-24" style="background: linear-gradient(180deg, #f0ede6 0%, #faf9f5 100%);">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+    <div class="reveal text-center mb-14">
+      <span class="section-eyebrow">Próximas datas</span>
+      <h2 class="text-4xl sm:text-5xl text-ink mt-3 mb-4 font-bold">
+        Pacotes disponíveis
+      </h2>
+      <p class="text-text-muted text-lg max-w-xl mx-auto leading-relaxed">
+        Escolha sua data, preencha o formulário abaixo e nossa equipe confirma via WhatsApp em até 24h.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-6">
+      {packages.map((pkg) => (
+        <div
+          class={`reveal flex flex-col rounded-2xl border overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.07)] transition-transform hover:-translate-y-1 ${
+            pkg.highlight
+              ? 'border-[#2d6a4f] bg-[#2d6a4f] text-white'
+              : 'border-[#d4cfc6] bg-white'
+          }`}
+        >
+          {/* Tag de mês */}
+          <div class={`px-6 pt-6 pb-0`}>
+            <span class={`inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 ${
+              pkg.highlight
+                ? 'bg-white/20 text-white'
+                : 'bg-[#2d6a4f]/10 text-[#2d6a4f]'
+            }`}>
+              {pkg.badge}
+            </span>
+            <h3 class={`font-bold text-2xl leading-tight mb-1 ${pkg.highlight ? 'text-white' : 'text-[#1c1a16]'}`}
+              style="font-family: var(--font-serif)">
+              {pkg.nome}
+            </h3>
+            <p class={`text-sm font-semibold mb-4 ${pkg.highlight ? 'text-white/70' : 'text-[#2d6a4f]'}`}>
+              {pkg.datas}
+            </p>
+            <p class={`text-sm leading-relaxed ${pkg.highlight ? 'text-white/80' : 'text-[#5a4e3a]'}`}>
+              {pkg.descricao}
+            </p>
+          </div>
+
+          {/* Diferenciais */}
+          <div class={`px-6 py-5 mt-auto`}>
+            <ul class="space-y-1.5 mb-6">
+              {['Pensão completa inclusa', 'Monitoria infantil', 'Piscina & lazer'].map((item) => (
+                <li class={`flex items-center gap-2 text-xs ${pkg.highlight ? 'text-white/80' : 'text-[#5a4e3a]'}`}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke={pkg.highlight ? 'rgba(255,255,255,0.8)' : '#2d6a4f'} stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href="#reserva"
+              class={`block text-center text-sm font-bold py-3 rounded-lg transition-all ${
+                pkg.highlight
+                  ? 'bg-white text-[#2d6a4f] hover:bg-white/90'
+                  : 'bg-[#2d6a4f] text-white hover:bg-[#1b4332]'
+              }`}
+            >
+              Quero reservar
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
