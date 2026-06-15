@@ -319,6 +319,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
   const [observacoes, setObservacoes] = useState('');
   const [restricoes, setRestricoes] = useState('');
 
+  const [aceitaComunicacoes, setAceitaComunicacoes] = useState(false);
   const [status, setStatus] = useState<FormStatus>('idle');
   const [partialSent, setPartialSent] = useState(false);
 
@@ -879,10 +880,23 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
             </div>
           )}
 
+          {/* Consentimento LGPD */}
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={aceitaComunicacoes}
+              onChange={(e) => setAceitaComunicacoes(e.target.checked)}
+              className="mt-0.5 h-4 w-4 flex-shrink-0 rounded border-[#d4cfc6] text-[#2d6a4f] accent-[#2d6a4f] cursor-pointer"
+            />
+            <span className="text-xs text-gray-500 leading-relaxed group-hover:text-gray-700 transition-colors">
+              Aceito receber comunicações da Fazenda Hotel Candeal sobre reservas, promoções e novidades.
+            </span>
+          </label>
+
           {/* Submit */}
           <button
             type="submit"
-            disabled={status === 'loading' || !selectedPeriodId || periodsLoading}
+            disabled={status === 'loading' || !selectedPeriodId || periodsLoading || !aceitaComunicacoes}
             className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] hover:bg-[#1b4332] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-lg text-base transition-all duration-200 shadow-md hover:shadow-lg"
           >
             {status === 'loading' ? (
