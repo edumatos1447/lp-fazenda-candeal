@@ -3,20 +3,21 @@ import LeadForm from './LeadForm';
 
 const apiBase = import.meta.env.PUBLIC_API_BASE_URL || '';
 const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER || '5571999990000';
+const sheetsWebhookUrl = import.meta.env.PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL || '';
 ---
 
-<section id="reserva" class="py-24 bg-parchment">
+<section id="reserva" class="py-24" style="background: linear-gradient(180deg, #faf9f5 0%, #f0ede6 100%);">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="text-center mb-12">
+    <div class="reveal text-center mb-12">
       <span class="section-eyebrow">Reservas</span>
-      <h2 class="font-serif text-4xl sm:text-5xl text-ink mt-3 mb-4">
+      <h2 class="text-4xl sm:text-5xl text-ink mt-3 mb-4 font-bold">
         Garanta sua data
       </h2>
-      <p class="text-text-muted text-lg max-w-xl mx-auto font-sans leading-relaxed">
+      <p class="text-text-muted text-lg max-w-xl mx-auto leading-relaxed">
         Selecione o período, preencha seus dados e nossa equipe confirma tudo via WhatsApp em até 24h.
       </p>
     </div>
 
-    <LeadForm client:load apiBase={apiBase} whatsappNumber={whatsappNumber} />
+    <LeadForm client:load apiBase={apiBase} whatsappNumber={whatsappNumber} sheetsWebhookUrl={sheetsWebhookUrl} />
   </div>
 </section>

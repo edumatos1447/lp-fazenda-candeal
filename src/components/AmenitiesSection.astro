@@ -1,76 +1,91 @@
 ---
-const pillars = [
+const features = [
   {
-    num: '01',
+    emoji: '🍽️',
     title: 'Pensão Completa',
-    desc: 'Café da manhã, almoço e jantar com gastronomia regional baiana feita com ingredientes da própria fazenda. Cada refeição é uma celebração da cultura local.',
+    desc: 'Café da manhã, almoço e jantar com gastronomia regional baiana, feita com ingredientes da própria fazenda.',
   },
   {
-    num: '02',
-    title: 'Acomodações Confortáveis',
-    desc: 'Quartos standard e bangalôs mezanino com ar-condicionado, roupa de cama e toalhas incluídas. Descanso com o conforto que sua família merece.',
-  },
-  {
-    num: '03',
+    emoji: '🏊',
     title: 'Piscina & Lazer',
-    desc: 'Piscina com área de descanso, jogos e espaços de convivência para toda a família curtir. O lugar perfeito para relaxar em meio à natureza baiana.',
+    desc: 'Piscina com área de descanso, jogos e espaços de convivência em meio à natureza baiana.',
   },
-];
-
-const secondary = [
   {
+    emoji: '👧',
     title: 'Monitoria Infantil',
-    desc: 'Equipe dedicada de monitores cuida das crianças com gincanas, passeios de charrete e atividades ao ar livre — os adultos descansam de verdade.',
+    desc: 'Equipe dedicada cuida das crianças com gincanas, passeios de charrete e atividades ao ar livre, inclusa na hospedagem.',
   },
   {
-    title: 'WiFi & Infraestrutura',
-    desc: 'Internet sem fio em todas as áreas, estacionamento gratuito e seguro para toda a sua família.',
+    emoji: '🛏️',
+    title: 'Acomodações Confortáveis',
+    desc: 'Quartos Standard e Bangalôs com ar-condicionado, roupa de cama, toalhas e frigobar.',
   },
   {
-    title: 'Auditório & Eventos',
-    desc: 'Espaço para 100 pessoas — ideal para retiros corporativos, workshops e celebrações em meio à natureza.',
+    emoji: '📶',
+    title: 'WiFi em toda a fazenda',
+    desc: 'Internet sem fio em todas as áreas e estacionamento seguro incluso para sua família.',
+  },
+  {
+    emoji: '🎉',
+    title: 'Espaços para Eventos',
+    desc: 'Espaço ideal para casamentos, chás revelação, eventos corporativos e celebrações especiais.',
   },
 ];
 ---
 
-<section id="amenidades" class="py-24 bg-primary-dark text-white">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+<section id="amenidades" class="relative overflow-hidden" style="background: linear-gradient(175deg, #0f2d1e 0%, #1b4332 55%, #112a1f 100%);">
 
-    <!-- Header -->
-    <div class="text-center mb-16">
-      <span class="section-eyebrow text-accent-light">O que nos torna especial</span>
-      <h2 class="font-serif text-4xl sm:text-5xl text-white mt-3 mb-5">
+  <!-- Decoração de fundo sutil -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full"
+      style="background: radial-gradient(circle, rgba(82,183,136,0.12) 0%, transparent 65%);"></div>
+    <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full"
+      style="background: radial-gradient(circle, rgba(183,121,31,0.10) 0%, transparent 65%);"></div>
+  </div>
+
+  <!-- Bloco de cabeçalho -->
+  <div class="reveal relative z-10 pt-20 pb-14 px-4 sm:px-6 text-center">
+    <div class="max-w-3xl mx-auto">
+      <span class="inline-block text-xs font-semibold uppercase tracking-[0.18em] text-accent-light mb-4">O que nos torna especial</span>
+      <h2 class="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-white leading-tight mb-5">
         Tudo para uma estada inesquecível
       </h2>
-      <div class="decorative-rule mx-auto"></div>
+      <p class="text-white/60 text-lg leading-relaxed max-w-xl mx-auto">
+        Cada detalhe pensado para que você e sua família descansem, se divirtam e se reconectem.
+      </p>
     </div>
+  </div>
 
-    <!-- 3 pilares principais -->
-    <div class="grid lg:grid-cols-3 gap-8 lg:gap-12 mb-16">
-      {pillars.map((item) => (
-        <div class="flex flex-col">
-          <span class="serif-numeral mb-4">{item.num}</span>
-          <h3 class="font-serif text-xl text-white mb-3">{item.title}</h3>
-          <p class="text-white/65 text-sm leading-relaxed">{item.desc}</p>
-        </div>
-      ))}
-    </div>
-
-    <!-- Divisória -->
-    <div class="border-t border-white/10 mb-12"></div>
-
-    <!-- 3 features secundárias -->
-    <div class="grid sm:grid-cols-3 gap-8">
-      {secondary.map((item) => (
-        <div class="flex items-start gap-4">
-          <div class="w-6 h-0.5 bg-accent-light mt-2.5 shrink-0"></div>
-          <div>
-            <h4 class="font-sans font-semibold text-white text-sm mb-1">{item.title}</h4>
-            <p class="text-white/55 text-xs leading-relaxed">{item.desc}</p>
+  <!-- Grid 3x2 -->
+  <div class="relative z-10 px-4 sm:px-6 pb-6">
+    <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {features.map((f, i) => (
+        <div
+          class="reveal group flex items-center gap-4 bg-white/8 border border-white/12 rounded-xl px-5 py-5 hover:bg-white/[0.11] hover:border-white/18 hover:shadow-[0_4px_16px_rgba(0,0,0,0.22)] transition-all duration-500 cursor-default"
+          data-delay={String(i + 1)}
+        >
+          <span class="text-3xl shrink-0 transition-transform duration-500 group-hover:scale-105">{f.emoji}</span>
+          <div class="min-w-0">
+            <h3 class="font-semibold text-white text-base leading-snug">{f.title}</h3>
+            <p class="text-white/60 text-sm leading-relaxed mt-1">{f.desc}</p>
           </div>
         </div>
       ))}
     </div>
-
   </div>
+
+  <!-- CTA -->
+  <div class="reveal relative z-10 text-center py-14 px-4">
+    <a
+      href="#reserva"
+      class="inline-flex items-center gap-3 font-bold px-10 py-4 rounded-xl text-base text-white transition-all duration-200 shadow-lg hover:shadow-2xl hover:-translate-y-0.5"
+      style="background: linear-gradient(135deg, #b7791f 0%, #d4952a 100%);"
+    >
+      Quero reservar minha estada
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+
 </section>

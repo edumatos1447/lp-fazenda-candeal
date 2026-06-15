@@ -10,7 +10,7 @@ const faqs = [
   },
   {
     q: 'Crianças pagam integral?',
-    a: 'Crianças até 3 anos não pagam. Dos 4 aos 10 anos há um valor especial reduzido. Consulte os preços específicos na seleção de período.',
+    a: 'Crianças até 5 anos não pagam. Consulte as condições através do WhatsApp.',
   },
   {
     q: 'A Fazenda fica longe de Salvador?',
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: 'Posso levar pets?',
-    a: 'Consulte nossa equipe via WhatsApp sobre a política de pets. Alguns períodos e acomodações têm regras específicas.',
+    a: 'Consulte nossa equipe via WhatsApp sobre a política de pets.',
   },
   {
     q: 'Há Wi-Fi na fazenda?',
@@ -27,16 +27,16 @@ const faqs = [
 ];
 ---
 
-<section id="faq" class="py-20 bg-parchment-dark">
+<section id="faq" class="py-20" style="background: linear-gradient(180deg, #ede8dc 0%, #faf9f5 100%);"  >
   <div class="max-w-3xl mx-auto px-4 sm:px-6">
-    <div class="text-center mb-14">
+    <div class="reveal text-center mb-14">
       <span class="section-eyebrow mb-3 block">Dúvidas frequentes</span>
       <h2 class="font-serif text-3xl sm:text-4xl text-ink mb-4">Perguntas frequentes</h2>
     </div>
 
     <div class="space-y-4">
       {faqs.map((faq, i) => (
-        <details class="group bg-white/80 rounded-xl border border-[#d4cfc6] shadow-sm">
+        <details class="reveal group bg-white/80 rounded-xl border border-[#d4cfc6] shadow-sm" data-delay={String((i % 4) + 1)}>
           <summary class="flex items-center justify-between gap-4 cursor-pointer px-6 py-5 list-none font-semibold text-text">
             <span>{faq.q}</span>
             <svg

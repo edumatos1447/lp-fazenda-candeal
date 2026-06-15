@@ -25,6 +25,7 @@ type Category = 'hotelaria' | 'day_use';
 interface Props {
   apiBase: string;
   whatsappNumber: string;
+  sheetsWebhookUrl?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -245,7 +246,7 @@ function Counter({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function LeadForm({ apiBase, whatsappNumber }: Props) {
+export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: Props) {
   const [periods, setPeriods] = useState<Period[]>([]);
   const [periodsLoading, setPeriodsLoading] = useState(true);
   const [periodsError, setPeriodsError] = useState(false);
@@ -404,6 +405,28 @@ export default function LeadForm({ apiBase, whatsappNumber }: Props) {
       // Dispara eventos de conversão
       window.fbq?.('track', 'Lead');
       window.gtag?.('event', 'generate_lead');
+
+      // Salva no Google Sheets (silencioso, não bloqueia o fluxo)
+      if (sheetsWebhookUrl) {
+        fetch(sheetsWebhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            timestamp: new Date().toISOString(),
+            nome,
+            telefone,
+            email,
+            periodo: selectedPeriod.nome,
+            data_entrada: selectedPeriod.data_entrada,
+            data_saida: selectedPeriod.data_saida,
+            adultos: qtdAdultos,
+            criancas: qtdCriancas,
+            tipo_acomodacao: tipoAcomodacao,
+            observacoes: observacoes || '',
+            restricoes: restricoes || '',
+          }),
+        }).catch(() => {});
+      }
 
       // Monta e abre WhatsApp
       const message = buildWhatsAppMessage(
@@ -620,7 +643,7 @@ export default function LeadForm({ apiBase, whatsappNumber }: Props) {
                 {idadesCriancas.map((idade, i) => (
                   <div key={i}>
                     <label className="block text-xs text-gray-500 mb-1">
-                      Criança {i + 1} — idade
+                      Criança {i + 1}: Idade
                     </label>
                     <input
                       type="number"
