@@ -265,6 +265,42 @@ function MiniCalendar({
   );
 }
 
+// ─── Day Use Slots ────────────────────────────────────────────────────────────
+
+function generateDayUseSlots(hotelariaPeriods: Period[]): Period[] {
+  const slots: Period[] = [];
+  const seen = new Set<string>();
+  for (const p of hotelariaPeriods) {
+    const entry = new Date(p.data_entrada + 'T12:00:00');
+    const exit  = new Date(p.data_saida   + 'T12:00:00');
+    const cur   = new Date(entry);
+    cur.setDate(cur.getDate() + 1);
+    while (cur <= exit) {
+      const dateStr = cur.toISOString().split('T')[0];
+      if (!seen.has(dateStr)) {
+        seen.add(dateStr);
+        slots.push({
+          periodo_id:           `dayuse-${p.periodo_id}-${dateStr}`,
+          nome:                 `Day Use — ${dateStr}`,
+          tipo:                 'day_use',
+          data_entrada:         dateStr,
+          hora_entrada:         '08:00',
+          data_saida:           dateStr,
+          hora_saida:           '18:00',
+          num_diarias:          0,
+          preco_casal_standard: 0,
+          preco_casal_mezanino: 0,
+          preco_crianca:        0,
+          preco_extra:          0,
+          vagas_disponiveis:    p.vagas_disponiveis,
+        });
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+  }
+  return slots;
+}
+
 // ─── Counter ──────────────────────────────────────────────────────────────────
 
 function Counter({
@@ -335,7 +371,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
   const selectedPeriod = periods.find((p) => p.periodo_id === selectedPeriodId) ?? null;
 
   const hotelariaPeriods = periods.filter((p) => p.tipo !== 'day_use');
-  const dayUsePeriods = periods.filter((p) => p.tipo === 'day_use');
+  const dayUsePeriods = generateDayUseSlots(hotelariaPeriods);
   const activePeriods = category === 'hotelaria' ? hotelariaPeriods : dayUsePeriods;
 
   // Carrega períodos disponíveis ao montar
@@ -861,7 +897,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
             <label className={labelClass}>Observações (opcional)</label>
             <textarea
               rows={2}
-              placeholder="Alguma observação especial para a sua estada?"
+              placeholder="Alguma observação especial para a sua estadia?"
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
               className={`${inputClass} resize-none`}
