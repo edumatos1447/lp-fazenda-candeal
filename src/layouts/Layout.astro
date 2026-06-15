@@ -6,6 +6,8 @@ const {
   title = 'Fazenda Hotel Candeal — Turismo Rural na Bahia',
   description = 'Viva uma experiência única de turismo rural na Fazenda Hotel Candeal. Gastronomia regional, natureza, lazer e muito conforto em Conceição do Jacuípe, Bahia.',
 } = Astro.props;
+
+const metaPixelId = import.meta.env.PUBLIC_META_PIXEL_ID;
 ---
 
 <!doctype html>
@@ -29,6 +31,26 @@ const {
     <!-- Fonte: Geist (self-hosted via /fonts/Geist-Variable.woff2) -->
     <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
 
+    {metaPixelId && (
+      <>
+        <!-- Meta Pixel Code -->
+        <script is:inline define:vars={{ metaPixelId }}>
+          !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+          n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+          document,'script','https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', metaPixelId);
+          fbq('track', 'PageView');
+        </script>
+        <noscript>
+          <img height="1" width="1" style="display:none"
+            src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
+          />
+        </noscript>
+        <!-- End Meta Pixel Code -->
+      </>
+    )}
   </head>
   <body class="bg-bg font-sans">
     <slot />

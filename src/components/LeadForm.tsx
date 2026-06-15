@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -330,6 +330,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
   const [aceitaComunicacoes, setAceitaComunicacoes] = useState(false);
   const [status, setStatus] = useState<FormStatus>('idle');
   const [partialSent, setPartialSent] = useState(false);
+  const scheduleTracked = useRef(false);
 
   const selectedPeriod = periods.find((p) => p.periodo_id === selectedPeriodId) ?? null;
 
@@ -427,6 +428,14 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
     return () => document.removeEventListener('candeal:room', handler);
   }, []);
 
+  // Dispara Schedule no Meta Pixel quando usuário seleciona período pela primeira vez
+  useEffect(() => {
+    if (selectedPeriodId && !scheduleTracked.current) {
+      scheduleTracked.current = true;
+      window.fbq?.('track', 'Schedule');
+    }
+  }, [selectedPeriodId]);
+
   // Sincroniza o array de idades com qtdCriancas
   useEffect(() => {
     setIdadesCriancas((prev) => {
@@ -493,6 +502,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
 
     const sendWhatsApp = () => {
       window.fbq?.('track', 'Lead');
+      window.fbq?.('track', 'InitiateCheckout');
       window.gtag?.('event', 'generate_lead');
       const message = buildWhatsAppMessage(
         selectedPeriod,
