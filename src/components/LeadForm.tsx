@@ -1,22 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface Period {
-  periodo_id: string;
-  nome: string;
-  tipo: string;
-  data_entrada: string;
-  hora_entrada: string;
-  data_saida: string;
-  hora_saida: string;
-  num_diarias: number;
-  preco_casal_standard: number;
-  preco_casal_mezanino: number;
-  preco_crianca: number;
-  preco_extra: number;
-  vagas_disponiveis: number;
-}
+import type { Period } from '../data/periodos';
 
 type TipoAcomodacao = 'standard' | 'mezanino_bangalo' | 'sem_preferencia';
 type FormStatus = 'idle' | 'loading' | 'success' | 'error' | 'no_vacancies';
@@ -26,6 +9,7 @@ interface Props {
   apiBase: string;
   whatsappNumber: string;
   sheetsWebhookUrl?: string;
+  staticPeriods?: Period[];
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -344,7 +328,7 @@ function Counter({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: Props) {
+export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, staticPeriods }: Props) {
   const [periods, setPeriods] = useState<Period[]>([]);
   const [periodsLoading, setPeriodsLoading] = useState(true);
   const [periodsError, setPeriodsError] = useState(false);
@@ -376,81 +360,35 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
 
   // Carrega períodos disponíveis ao montar
   useEffect(() => {
+    const loadPeriods = (data: Period[]) => {
+      setPeriods(data);
+      const firstHotelaria = data.find((p) => p.tipo !== 'day_use');
+      const firstPeriod = firstHotelaria ?? data[0];
+      if (firstPeriod) {
+        setSelectedPeriodId(firstPeriod.periodo_id);
+        const d = new Date(firstPeriod.data_entrada + 'T12:00:00');
+        setViewYear(d.getFullYear());
+        setViewMonth(d.getMonth());
+      }
+      setPeriodsLoading(false);
+    };
+
+    if (staticPeriods && staticPeriods.length > 0) {
+      loadPeriods(staticPeriods);
+      return;
+    }
+
     if (!apiBase) {
-      // Dados de simulação local (sem API configurada)
-      const mock: Period[] = [
-        {
-          periodo_id: 'mock-bye-bye-ferias',
-          nome: 'Bye Bye Férias',
-          tipo: 'feriado',
-          data_entrada: '2026-07-10',
-          hora_entrada: '14:00',
-          data_saida: '2026-07-12',
-          hora_saida: '12:00',
-          num_diarias: 3,
-          preco_casal_standard: 0,
-          preco_casal_mezanino: 0,
-          preco_crianca: 0,
-          preco_extra: 0,
-          vagas_disponiveis: 8,
-        },
-        {
-          periodo_id: 'mock-dia-dos-pais',
-          nome: 'Dia dos Pais',
-          tipo: 'feriado',
-          data_entrada: '2026-08-07',
-          hora_entrada: '14:00',
-          data_saida: '2026-08-09',
-          hora_saida: '12:00',
-          num_diarias: 3,
-          preco_casal_standard: 0,
-          preco_casal_mezanino: 0,
-          preco_crianca: 0,
-          preco_extra: 0,
-          vagas_disponiveis: 8,
-        },
-        {
-          periodo_id: 'mock-festival-inverno',
-          nome: 'Festival de Inverno',
-          tipo: 'feriado',
-          data_entrada: '2026-08-21',
-          hora_entrada: '14:00',
-          data_saida: '2026-08-23',
-          hora_saida: '12:00',
-          num_diarias: 3,
-          preco_casal_standard: 0,
-          preco_casal_mezanino: 0,
-          preco_crianca: 0,
-          preco_extra: 0,
-          vagas_disponiveis: 8,
-        },
-      ];
-      setPeriods(mock);
-      const firstHotelaria = mock.find((p) => p.tipo !== 'day_use');
-      const firstPeriod = firstHotelaria ?? mock[0];
-      setSelectedPeriodId(firstPeriod.periodo_id);
-      const d = new Date(firstPeriod.data_entrada + 'T12:00:00');
-      setViewYear(d.getFullYear());
-      setViewMonth(d.getMonth());
       setPeriodsLoading(false);
       return;
     }
+
     fetch(`${apiBase}/api/periodos/disponiveis`)
       .then((r) => r.json())
-      .then((data: Period[]) => {
-        setPeriods(data);
-        const firstHotelaria = data.find((p) => p.tipo !== 'day_use');
-        const firstPeriod = firstHotelaria ?? data[0];
-        if (firstPeriod) {
-          setSelectedPeriodId(firstPeriod.periodo_id);
-          const d = new Date(firstPeriod.data_entrada + 'T12:00:00');
-          setViewYear(d.getFullYear());
-          setViewMonth(d.getMonth());
-        }
-      })
+      .then((data: Period[]) => loadPeriods(data))
       .catch(() => setPeriodsError(true))
       .finally(() => setPeriodsLoading(false));
-  }, [apiBase]);
+  }, [apiBase, staticPeriods]);
 
   // Escuta evento disparado pelos botões "Reservar quarto X" da seção de acomodações
   useEffect(() => {
@@ -484,9 +422,8 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
 
   function handleCategoryChange(cat: Category) {
     setCategory(cat);
-    const list = cat === 'hotelaria'
-      ? periods.filter((p) => p.tipo !== 'day_use')
-      : periods.filter((p) => p.tipo === 'day_use');
+    const hotelaria = periods.filter((p) => p.tipo !== 'day_use');
+    const list = cat === 'hotelaria' ? hotelaria : generateDayUseSlots(hotelaria);
     const first = list[0];
     setSelectedPeriodId(first?.periodo_id ?? '');
     if (first) {

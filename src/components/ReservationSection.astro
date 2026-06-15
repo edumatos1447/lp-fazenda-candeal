@@ -1,5 +1,6 @@
 ---
 import LeadForm from './LeadForm';
+import { periodos } from '../data/periodos';
 
 const apiBase = import.meta.env.PUBLIC_API_BASE_URL || '';
 const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER || '5571999990000';
@@ -18,6 +19,6 @@ const sheetsWebhookUrl = import.meta.env.PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL || '';
       </p>
     </div>
 
-    <LeadForm client:load apiBase={apiBase} whatsappNumber={whatsappNumber} sheetsWebhookUrl={sheetsWebhookUrl} />
+    <LeadForm client:load apiBase={apiBase} whatsappNumber={whatsappNumber} sheetsWebhookUrl={sheetsWebhookUrl} staticPeriods={periodos} />
   </div>
 </section>
