@@ -470,6 +470,57 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
 
     setStatus('loading');
 
+    const sendWhatsApp = () => {
+      window.fbq?.('track', 'Lead');
+      window.gtag?.('event', 'generate_lead');
+      const message = buildWhatsAppMessage(
+        selectedPeriod,
+        nome,
+        telefone,
+        email,
+        qtdAdultos,
+        qtdCriancas,
+        idadesCriancas,
+        tipoAcomodacao,
+        observacoes,
+        restricoes,
+      );
+      const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+      setStatus('success');
+    };
+
+    const sendSheets = () => {
+      if (!sheetsWebhookUrl) return;
+      fetch(sheetsWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          nome,
+          telefone,
+          email,
+          periodo: selectedPeriod.nome,
+          data_entrada: selectedPeriod.data_entrada,
+          data_saida: selectedPeriod.data_saida,
+          num_diarias: selectedPeriod.num_diarias,
+          adultos: qtdAdultos,
+          criancas: qtdCriancas,
+          idades_criancas: idadesCriancas.join(', ') || '',
+          tipo_acomodacao: tipoAcomodacao,
+          observacoes: observacoes || '',
+          restricoes: restricoes || '',
+        }),
+      }).catch(() => {});
+    };
+
+    // Sem API configurada: vai direto para o WhatsApp
+    if (!apiBase) {
+      sendSheets();
+      sendWhatsApp();
+      return;
+    }
+
     try {
       const res = await fetch(`${apiBase}/api/reservas`, {
         method: 'POST',
@@ -498,51 +549,8 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl }: 
         return;
       }
 
-      // Dispara eventos de conversão
-      window.fbq?.('track', 'Lead');
-      window.gtag?.('event', 'generate_lead');
-
-      // Salva no Google Sheets (silencioso, não bloqueia o fluxo)
-      if (sheetsWebhookUrl) {
-        fetch(sheetsWebhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            timestamp: new Date().toISOString(),
-            nome,
-            telefone,
-            email,
-            periodo: selectedPeriod.nome,
-            data_entrada: selectedPeriod.data_entrada,
-            data_saida: selectedPeriod.data_saida,
-            num_diarias: selectedPeriod.num_diarias,
-            adultos: qtdAdultos,
-            criancas: qtdCriancas,
-            idades_criancas: idadesCriancas.join(', ') || '',
-            tipo_acomodacao: tipoAcomodacao,
-            observacoes: observacoes || '',
-            restricoes: restricoes || '',
-          }),
-        }).catch(() => {});
-      }
-
-      // Monta e abre WhatsApp
-      const message = buildWhatsAppMessage(
-        selectedPeriod,
-        nome,
-        telefone,
-        email,
-        qtdAdultos,
-        qtdCriancas,
-        idadesCriancas,
-        tipoAcomodacao,
-        observacoes,
-        restricoes,
-      );
-      const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-      window.open(waUrl, '_blank', 'noopener,noreferrer');
-
-      setStatus('success');
+      sendSheets();
+      sendWhatsApp();
     } catch {
       setStatus('error');
     }
