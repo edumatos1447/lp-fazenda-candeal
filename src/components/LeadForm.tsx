@@ -365,7 +365,6 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
       const firstHotelaria = data.find((p) => p.tipo !== 'day_use');
       const firstPeriod = firstHotelaria ?? data[0];
       if (firstPeriod) {
-        setSelectedPeriodId(firstPeriod.periodo_id);
         const d = new Date(firstPeriod.data_entrada + 'T12:00:00');
         setViewYear(d.getFullYear());
         setViewMonth(d.getMonth());
@@ -664,9 +663,21 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
               {/* Lista de pacotes disponíveis */}
               {activePeriods.length > 0 && (
                 <div className="mt-4 space-y-2">
-                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                    Pacotes disponíveis
-                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[13px] font-bold text-[#2d6a4f] uppercase tracking-wider">
+                      Pacotes disponíveis
+                    </p>
+                    {!selectedPeriodId && (
+                      <span className="text-[11px] font-semibold text-[#b7791f] animate-pulse">
+                        ← Escolha um pacote
+                      </span>
+                    )}
+                  </div>
+                  {!selectedPeriodId && (
+                    <p className="text-xs text-[#b7791f] bg-[#b7791f]/10 border border-[#b7791f]/30 rounded-lg px-3 py-2 mb-2">
+                      Selecione abaixo a data do pacote que deseja reservar.
+                    </p>
+                  )}
                   {activePeriods.map((p) => {
                     const isSelected = p.periodo_id === selectedPeriodId;
                     return (
@@ -682,7 +693,9 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
                         className={`w-full text-left rounded-lg border px-3.5 py-3 transition-all ${
                           isSelected
                             ? 'border-[#2d6a4f] bg-[#2d6a4f]/6 ring-1 ring-[#2d6a4f]/30'
-                            : 'border-[#d4cfc6] bg-white hover:border-[#2d6a4f]/40 hover:bg-[#f7f3eb]'
+                            : selectedPeriodId
+                              ? 'border-[#d4cfc6] bg-white hover:border-[#2d6a4f]/40 hover:bg-[#f7f3eb]'
+                              : 'border-[#b7791f]/40 bg-white hover:border-[#2d6a4f]/40 hover:bg-[#f7f3eb]'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
@@ -920,6 +933,12 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
               </>
             )}
           </button>
+
+          {!selectedPeriodId && (
+            <p className="text-xs text-center font-semibold text-[#b7791f]">
+              Selecione um pacote acima para habilitar o envio.
+            </p>
+          )}
 
           <p className="text-xs text-center text-gray-400">
             Ao enviar, suas informações serão usadas apenas para confirmar sua reserva.
