@@ -12,6 +12,9 @@ const rooms = [
     imageAlt: 'Interior do quarto Mezanino — andar inferior com escada e camas solteiro',
     capacity: 'Até 6 pessoas',
     capacityDetail: '(máx. 4 adultos + 2 crianças)',
+    priceCouple: 'R$ 1.079',
+    priceChild: 'Criança 5–11 anos: R$ 218',
+    priceAdultExtra: '+12 anos/adulto extra: R$ 364',
     features: [
       '1 cama casal no mezanino superior',
       '2 camas solteiro + 2 bicamas no térreo',
@@ -30,6 +33,9 @@ const rooms = [
     imageAlt: 'Varanda do quarto Standard com rede artesanal',
     capacity: 'Até 4 pessoas',
     capacityDetail: '(máx. 3 adultos + 1 criança)',
+    priceCouple: 'R$ 972',
+    priceChild: 'Criança 5–11 anos: R$ 218',
+    priceAdultExtra: '+12 anos/adulto extra: R$ 364',
     features: [
       '1 cama casal + 1 cama solteiro + 1 bicama',
       'Split AC, frigobar e TV digital',
@@ -47,6 +53,9 @@ const rooms = [
     imageAlt: 'Varanda do Bangalô com rede e natureza ao redor',
     capacity: 'Até 4 pessoas',
     capacityDetail: '(máx. 3 adultos + 1 criança)',
+    priceCouple: 'R$ 1.079',
+    priceChild: 'Criança 5–11 anos: R$ 218',
+    priceAdultExtra: '+12 anos/adulto extra: R$ 364',
     features: [
       'Chalés independentes (~50m do village)',
       '2 chalés com 2 bangalôs cada',
@@ -118,7 +127,7 @@ const rooms = [
             </div>
 
             {/* Features */}
-            <ul class="space-y-2 flex-1 mb-6">
+            <ul class="space-y-2 flex-1 mb-5">
               {room.features.map((f) => (
                 <li class="flex items-start gap-2 text-sm font-sans text-text-muted">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-primary shrink-0 mt-0.5">
@@ -128,6 +137,19 @@ const rooms = [
                 </li>
               ))}
             </ul>
+
+            {/* Preço */}
+            <div class="rounded-lg bg-[#f0ede6] border border-[#e0dbd0] px-4 py-3 mb-5">
+              <p class="font-sans text-xs font-semibold uppercase tracking-wide text-text-muted mb-1.5">Casal ou 2 adultos</p>
+              <div class="flex items-baseline gap-1 mb-3">
+                <span class="font-serif text-3xl font-bold text-ink">{room.priceCouple}</span>
+                <span class="font-sans text-sm text-text-muted">/diária</span>
+              </div>
+              <div class="border-t border-[#d4cfc6] pt-2.5 space-y-1">
+                <p class="font-sans text-xs font-medium text-[#5a4e3a]">{room.priceChild}</p>
+                <p class="font-sans text-xs font-medium text-[#5a4e3a]">{room.priceAdultExtra}</p>
+              </div>
+            </div>
 
             <button
               type="button"

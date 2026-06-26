@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Period } from '../data/periodos';
 
 type TipoAcomodacao = 'standard' | 'mezanino_bangalo' | 'sem_preferencia';
@@ -42,6 +42,7 @@ function buildWhatsAppMessage(
   tipoAcomodacao: TipoAcomodacao,
   observacoes: string,
   restricoes: string,
+  totalEstimado?: number | null,
 ) {
   const criancasText =
     qtdCriancas > 0
@@ -64,11 +65,65 @@ function buildWhatsAppMessage(
     `*Adultos:* ${qtdAdultos}`,
     `*Crianças:* ${criancasText}`,
     period.tipo !== 'day_use' ? `*Acomodação preferida:* ${tipoLabel[tipoAcomodacao]}` : null,
+    totalEstimado ? `*Valor estimado:* ${formatCurrency(totalEstimado)}` : null,
     observacoes ? `*Observações:* ${observacoes}` : null,
     restricoes ? `*Restrições alimentares:* ${restricoes}` : null,
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+// ─── Cálculo de valor estimado ────────────────────────────────────────────────
+
+function calcularResumo(
+  tipoAcomodacao: TipoAcomodacao,
+  qtdAdultos: number,
+  idadesCriancas: number[],
+  period: Period,
+): { itens: { descricao: string; valor: number }[]; total: number } | null {
+  if (tipoAcomodacao === 'sem_preferencia') return null;
+
+  const basePrice =
+    tipoAcomodacao === 'standard'
+      ? period.preco_casal_standard
+      : period.preco_casal_mezanino;
+
+  if (!basePrice) return null;
+
+  const numDiarias = period.num_diarias;
+  const tipoLabel = tipoAcomodacao === 'standard' ? 'Standard' : 'Mezanino/Bangalô';
+  const itens: { descricao: string; valor: number }[] = [];
+
+  itens.push({
+    descricao: `${numDiarias} diária${numDiarias !== 1 ? 's' : ''} (casal) — ${tipoLabel}`,
+    valor: basePrice * numDiarias,
+  });
+
+  const extraAdults = Math.max(0, qtdAdultos - 2);
+  if (extraAdults > 0) {
+    itens.push({
+      descricao: `${extraAdults} adulto${extraAdults > 1 ? 's' : ''} extra`,
+      valor: extraAdults * period.preco_extra * numDiarias,
+    });
+  }
+
+  for (let i = 0; i < idadesCriancas.length; i++) {
+    const idade = idadesCriancas[i];
+    if (idade >= 12) {
+      itens.push({
+        descricao: `Criança ${i + 1} (${idade} anos) — adulto extra`,
+        valor: period.preco_extra * numDiarias,
+      });
+    } else if (idade >= 5) {
+      itens.push({
+        descricao: `Criança ${i + 1} (${idade} anos)`,
+        valor: period.preco_crianca * numDiarias,
+      });
+    }
+    // 0–4 anos: gratuito
+  }
+
+  return { itens, total: itens.reduce((sum, item) => sum + item.valor, 0) };
 }
 
 // ─── MiniCalendar ─────────────────────────────────────────────────────────────
@@ -354,6 +409,14 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
 
   const selectedPeriod = periods.find((p) => p.periodo_id === selectedPeriodId) ?? null;
 
+  const resumo = useMemo(
+    () =>
+      selectedPeriod && category === 'hotelaria'
+        ? calcularResumo(tipoAcomodacao, qtdAdultos, idadesCriancas, selectedPeriod)
+        : null,
+    [tipoAcomodacao, qtdAdultos, idadesCriancas, selectedPeriod, category],
+  );
+
   const hotelariaPeriods = periods.filter((p) => p.tipo !== 'day_use');
   const dayUsePeriods = generateDayUseSlots(hotelariaPeriods);
   const activePeriods = category === 'hotelaria' ? hotelariaPeriods : dayUsePeriods;
@@ -487,6 +550,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
         tipoAcomodacao,
         observacoes,
         restricoes,
+        resumo?.total,
       );
       const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
@@ -823,7 +887,9 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
           {/* Tipo de acomodação — apenas para hotelaria */}
           {category === 'hotelaria' && (
             <div>
-              <label className={labelClass}>Tipo de acomodação preferida</label>
+              <label className={labelClass}>
+                Tipo de acomodação <span className="text-red-500">*</span>
+              </label>
               {selectedPeriod && selectedPeriod.preco_casal_standard > 0 && (
                 <p className="text-xs text-gray-400 mb-2">
                   Standard: {formatCurrency(selectedPeriod.preco_casal_standard)} · Mezanino/Bangalô:{' '}
@@ -833,9 +899,9 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
               <select
                 value={tipoAcomodacao}
                 onChange={(e) => setTipoAcomodacao(e.target.value as TipoAcomodacao)}
-                className={inputClass}
+                className={`${inputClass} ${tipoAcomodacao === 'sem_preferencia' ? 'border-amber-400 ring-2 ring-amber-300/40' : ''}`}
               >
-                <option value="sem_preferencia">Sem preferência</option>
+                <option value="sem_preferencia" disabled>Escolha o tipo de acomodação...</option>
                 <option value="standard">Standard</option>
                 <option value="mezanino_bangalo">Mezanino / Bangalô</option>
               </select>
@@ -910,10 +976,46 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
             </span>
           </label>
 
+          {/* Estimativa de valor */}
+          {selectedPeriod && category === 'hotelaria' && (
+            resumo ? (
+              <div className="rounded-xl bg-[#f0f7f4] border border-[#2d6a4f]/30 p-4">
+                <p className="text-xs font-bold uppercase tracking-wide text-[#2d6a4f] mb-3">
+                  Estimativa de valor
+                </p>
+                <div className="space-y-2 mb-3">
+                  {resumo.itens.map((item, i) => (
+                    <div key={i} className="flex items-center justify-between gap-3 text-sm">
+                      <span className="text-[#5a4e3a]">{item.descricao}</span>
+                      <span className="font-medium text-[#1c1a16] tabular-nums shrink-0">
+                        {formatCurrency(item.valor)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-[#2d6a4f]/20 pt-3 flex items-center justify-between gap-2">
+                  <span className="text-sm font-semibold text-[#1c1a16]">Total estimado</span>
+                  <span className="text-xl font-bold text-[#2d6a4f] tabular-nums">
+                    {formatCurrency(resumo.total)}
+                  </span>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-2">
+                  * Estimativa — valores sujeitos à confirmação pela equipe
+                </p>
+              </div>
+            ) : (
+              tipoAcomodacao === 'sem_preferencia' && selectedPeriod.preco_casal_standard > 0 && (
+                <div className="rounded-xl bg-[#f7f3eb] border border-[#d4cfc6] px-4 py-3 text-xs text-[#5a4e3a] text-center">
+                  Selecione o tipo de acomodação para ver o valor estimado.
+                </div>
+              )
+            )
+          )}
+
           {/* Submit */}
           <button
             type="submit"
-            disabled={status === 'loading' || !selectedPeriodId || periodsLoading || !aceitaComunicacoes}
+            disabled={status === 'loading' || !selectedPeriodId || periodsLoading || !aceitaComunicacoes || (category === 'hotelaria' && tipoAcomodacao === 'sem_preferencia')}
             className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] hover:bg-[#1b4332] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-lg text-base transition-all duration-200 shadow-md hover:shadow-lg"
           >
             {status === 'loading' ? (
@@ -937,6 +1039,12 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
           {!selectedPeriodId && (
             <p className="text-xs text-center font-semibold text-[#b7791f]">
               Selecione um pacote acima para habilitar o envio.
+            </p>
+          )}
+
+          {selectedPeriodId && category === 'hotelaria' && tipoAcomodacao === 'sem_preferencia' && (
+            <p className="text-xs text-center font-semibold text-[#b7791f]">
+              Escolha o tipo de acomodação para continuar.
             </p>
           )}
 
