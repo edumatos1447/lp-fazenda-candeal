@@ -12,6 +12,9 @@ import TestimonialsSection from '../components/TestimonialsSection.astro';
 import FAQSection from '../components/FAQSection.astro';
 import FooterSection from '../components/FooterSection.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import WhatsAppLeadModal from '../components/WhatsAppLeadModal';
+
+const sheetsWebhookUrl = import.meta.env.PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL || '';
 ---
 
 <Layout>
@@ -27,4 +30,5 @@ import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
   <FAQSection />
   <FooterSection />
   <FloatingWhatsApp />
+  <WhatsAppLeadModal client:load sheetsWebhookUrl={sheetsWebhookUrl} />
 </Layout>
