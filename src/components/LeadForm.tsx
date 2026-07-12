@@ -210,14 +210,25 @@ function MiniCalendar({
     }
   });
 
-  const hasPrev = periods.some((p) => {
+  // Faixa navegável: do mês atual (ou do 1º pacote, o que vier antes) até
+  // 12 meses após o último pacote. Assim as setas continuam funcionando mesmo
+  // quando todos os pacotes estão num único mês — os meses vizinhos aparecem
+  // vazios e só os dias de pacote permanecem clicáveis.
+  const viewFirst = new Date(viewYear, viewMonth, 1);
+  const now = new Date();
+  const currentMonthFirst = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const packageMonths = periods.map((p) => {
     const d = new Date(p.data_entrada + 'T12:00:00');
-    return d.getFullYear() < viewYear || (d.getFullYear() === viewYear && d.getMonth() < viewMonth);
+    return new Date(d.getFullYear(), d.getMonth(), 1);
   });
-  const hasNext = periods.some((p) => {
-    const d = new Date(p.data_entrada + 'T12:00:00');
-    return d.getFullYear() > viewYear || (d.getFullYear() === viewYear && d.getMonth() > viewMonth);
-  });
+
+  const navMin = packageMonths.reduce((min, d) => (d < min ? d : min), currentMonthFirst);
+  const lastPackage = packageMonths.reduce((max, d) => (d > max ? d : max), navMin);
+  const navMax = new Date(lastPackage.getFullYear(), lastPackage.getMonth() + 12, 1);
+
+  const hasPrev = viewFirst > navMin;
+  const hasNext = viewFirst < navMax;
 
   const blanks = Array(firstDayOfWeek).fill(null);
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
