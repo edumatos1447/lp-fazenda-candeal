@@ -71,6 +71,27 @@ src/
 2. **onBlur(telefone)** (após nome preenchido, uma vez) → `POST /api/leads-parciais` silencioso com UTMs de `window.__utms`
 3. **Submit** → `POST /api/reservas` → 201: abre `wa.me` com mensagem pré-preenchida + dispara eventos de conversão (`fbq`, `gtag`) → 409: "vagas esgotadas" → 500: link direto WA
 
+## Rastreamento de origem dos leads
+
+`WhatsAppLeadModal.tsx` intercepta **todo** clique em `a[href*="wa.me"]` fora de `#reserva` (em capture phase, com `stopPropagation`). Consequência: um `onclick` no próprio `<a>` **nunca dispara** — o evento morre antes de chegar no elemento. Toda instrumentação de CTA passa por dois `data-*` lidos pelo modal:
+
+| atributo | default | efeito |
+|----------|---------|--------|
+| `data-lead-tipo` | `whatsapp_direto` | vira a coluna **Origem** da planilha |
+| `data-fb-event` | `Lead` | evento disparado no Meta Pixel |
+
+Valores em uso: `day_use_escolar` (+ `data-fb-event="Contact"`, único CTA fora do funil de reserva), `day_use`, `whatsapp_flutuante`, `whatsapp_direto`. O `LeadForm` envia `formulario_hotelaria` / `formulario_day_use`.
+
+Ao adicionar um CTA de WhatsApp, marque-o — sem `data-lead-tipo` ele cai no balde genérico. Novos valores precisam de rótulo em `ROTULOS_ORIGEM` no Apps Script.
+
+## Planilha de leads (Google Apps Script)
+
+Código versionado em `docs/apps-script-planilha.gs`. Monta cada linha a partir do cabeçalho **real** da planilha e acrescenta colunas ausentes à direita, então dá pra adicionar campos sem desalinhar o histórico. Basta incluir a coluna em `CAMPOS` + `ORDEM`.
+
+Os POSTs usam `mode: 'no-cors'` — falhas são invisíveis no browser. Campo enviado que não tenha coluna correspondente é descartado em silêncio.
+
+Ao republicar: **Gerenciar implantações > editar > Nova versão** (uma implantação nova gera outra URL e quebra `PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL`).
+
 ## UTM Capture
 
 Capturado em `Layout.astro` via `<script>` inline e exposto como `window.__utms` (tipado em `src/env.d.ts`). O `LeadForm.tsx` lê `window.__utms` ao disparar `/api/leads-parciais`.

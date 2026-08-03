@@ -4,6 +4,48 @@ interface Props {
   sheetsWebhookUrl?: string;
 }
 
+// Copy e rótulo por origem de CTA. O rótulo vai para os parâmetros do Pixel,
+// que é o que permite criar Conversão Personalizada por produto no Meta.
+const ORIGENS: Record<
+  string,
+  { rotulo: string; titulo: string; subtitulo: string; cta: string; pedeEscola?: boolean }
+> = {
+  day_use_escolar: {
+    rotulo: 'Day Use Escolar',
+    titulo: 'Vamos falar sobre sua turma',
+    subtitulo: 'Preencha seus dados e nossa equipe escolar assume a conversa no WhatsApp.',
+    cta: 'Reservar Day Use Escolar',
+    pedeEscola: true,
+  },
+  day_use: {
+    rotulo: 'Day Use',
+    titulo: 'Antes de continuar...',
+    subtitulo: 'Preencha seus dados para seguir para o WhatsApp.',
+    cta: 'Falar sobre o Day Use',
+  },
+};
+
+const ORIGEM_PADRAO = {
+  rotulo: 'WhatsApp Direto',
+  titulo: 'Antes de continuar...',
+  subtitulo: 'Preencha seus dados para seguir para o WhatsApp.',
+  cta: 'Reservar pelo WhatsApp',
+};
+
+// Anexa a escola à mensagem já montada no href do CTA, para a equipe receber
+// o lead qualificado direto no WhatsApp e não só na planilha.
+function anexarEscola(url: string, escola: string) {
+  if (!escola.trim()) return url;
+  try {
+    const u = new URL(url);
+    const texto = u.searchParams.get('text') ?? '';
+    u.searchParams.set('text', `${texto}\n\n*Escola:* ${escola.trim()}`);
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 function formatPhone(value: string) {
   const digits = value.replace(/\D/g, '').slice(0, 11);
   if (digits.length === 0) return '';
@@ -22,11 +64,15 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [targetUrl, setTargetUrl] = useState('');
   const [leadTipo, setLeadTipo] = useState('whatsapp_direto');
+  const [fbEvent, setFbEvent] = useState('Lead');
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
+  const [escola, setEscola] = useState('');
   const [aceitaComunicacoes, setAceitaComunicacoes] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const origem = ORIGENS[leadTipo] ?? ORIGEM_PADRAO;
 
   // Intercepta cliques em qualquer link wa.me fora do formulário principal
   useEffect(() => {
@@ -38,6 +84,7 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
       e.stopPropagation();
       setTargetUrl(el.href);
       setLeadTipo(el.dataset.leadTipo || 'whatsapp_direto');
+      setFbEvent(el.dataset.fbEvent || 'Lead');
       setIsOpen(true);
     };
 
@@ -62,9 +109,11 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
   function close() {
     setIsOpen(false);
     setLeadTipo('whatsapp_direto');
+    setFbEvent('Lead');
     setNome('');
     setTelefone('');
     setEmail('');
+    setEscola('');
     setAceitaComunicacoes(false);
     setIsSubmitting(false);
   }
@@ -84,14 +133,23 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
           nome,
           telefone,
           email: email || '',
+          escola: escola.trim(),
           tipo: leadTipo,
           ...utms,
         }),
       }).catch(() => {});
     }
 
-    window.fbq?.('track', 'Lead');
-    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    // Evento do Pixel definido por botão via data-fb-event (default: Lead).
+    // O Day Use Escolar usa "Contact" para não misturar com o funil de reserva.
+    // Os parâmetros permitem montar Conversão Personalizada por produto no Meta
+    // sem depender de criar um evento novo para cada CTA.
+    window.fbq?.('track', fbEvent, {
+      content_name: origem.rotulo,
+      content_category: leadTipo,
+    });
+    window.gtag?.('event', 'generate_lead', { lead_source: leadTipo });
+    window.open(anexarEscola(targetUrl, escola), '_blank', 'noopener,noreferrer');
     close();
   }
 
@@ -141,10 +199,10 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
               </svg>
             </div>
             <h2 id="wa-modal-title" className="text-xl font-bold text-[#1c1a16]">
-              Antes de continuar...
+              {origem.titulo}
             </h2>
             <p className="text-sm text-gray-500 mt-1 leading-relaxed">
-              Preencha seus dados para seguir para o WhatsApp.
+              {origem.subtitulo}
             </p>
           </div>
 
@@ -165,6 +223,23 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
                 autoFocus
               />
             </div>
+
+            {origem.pedeEscola && (
+              <div>
+                <label htmlFor="wa-escola" className={labelClass}>
+                  Escola interessada <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="wa-escola"
+                  type="text"
+                  required
+                  placeholder="Colégio Municipal Candeal"
+                  value={escola}
+                  onChange={(e) => setEscola(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            )}
 
             <div>
               <label htmlFor="wa-tel" className={labelClass}>
@@ -221,7 +296,7 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
                   Aguarde...
                 </>
               ) : (
-                <>{WA_ICON} Reservar pelo WhatsApp</>
+                <>{WA_ICON} {origem.cta}</>
               )}
             </button>
           </form>

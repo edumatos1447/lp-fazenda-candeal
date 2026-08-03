@@ -570,11 +570,13 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
 
     const sendSheets = () => {
       if (!sheetsWebhookUrl) return;
+      const utms = window.__utms ?? {};
       fetch(sheetsWebhookUrl, {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify({
           timestamp: new Date().toISOString(),
+          tipo: `formulario_${category}`,
           nome,
           telefone,
           email,
@@ -588,6 +590,7 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
           tipo_acomodacao: tipoAcomodacao,
           observacoes: observacoes || '',
           restricoes: restricoes || '',
+          ...utms,
         }),
       }).catch(() => {});
     };
