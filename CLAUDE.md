@@ -28,6 +28,7 @@ Copie `.env.example` para `.env` e preencha:
 |----------|-------------|-----------|
 | `PUBLIC_API_BASE_URL` | Sim | URL base da app admin Next.js (sem barra final) |
 | `PUBLIC_WHATSAPP_NUMBER` | Sim | Número WA da fazenda com DDI (ex: `5571999990000`) |
+| `PUBLIC_WHATSAPP_ESCOLAR_NUMBER` | Não | Número WA exclusivo do Day Use Escolar (default: `5571993043763`) |
 | `PUBLIC_YOUTUBE_VSL_ID` | Não | ID do vídeo YouTube para a seção VSL |
 | `PUBLIC_META_PIXEL_ID` | Não | ID do Meta Pixel (seção de tracking em `Layout.astro`) |
 | `PUBLIC_GOOGLE_ADS_ID` | Não | Measurement ID GA4/Google Ads (ex: `G-XXXX`) |
@@ -57,6 +58,7 @@ src/
     ReservationSection.astro  # wrapper Astro que monta o React island
     LeadForm.tsx              # ★ componente React principal (ver abaixo)
     DayUseSection.astro       # seção Day Use com CTA de pagamento
+    SchoolDayUseSection.astro # seção Day Use Escolar — CTA vai para WA próprio (PUBLIC_WHATSAPP_ESCOLAR_NUMBER)
     TestimonialsSection.astro # depoimentos fixos de hóspedes
     FAQSection.astro          # perguntas frequentes com <details>
     FooterSection.astro       # footer com CTA strip + info + links

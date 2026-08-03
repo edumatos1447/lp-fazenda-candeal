@@ -21,6 +21,7 @@ const WA_ICON = (
 export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [targetUrl, setTargetUrl] = useState('');
+  const [leadTipo, setLeadTipo] = useState('whatsapp_direto');
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
@@ -36,6 +37,7 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
       e.preventDefault();
       e.stopPropagation();
       setTargetUrl(el.href);
+      setLeadTipo(el.dataset.leadTipo || 'whatsapp_direto');
       setIsOpen(true);
     };
 
@@ -59,6 +61,7 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
 
   function close() {
     setIsOpen(false);
+    setLeadTipo('whatsapp_direto');
     setNome('');
     setTelefone('');
     setEmail('');
@@ -81,7 +84,7 @@ export default function WhatsAppLeadModal({ sheetsWebhookUrl }: Props) {
           nome,
           telefone,
           email: email || '',
-          tipo: 'whatsapp_direto',
+          tipo: leadTipo,
           ...utms,
         }),
       }).catch(() => {});
