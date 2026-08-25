@@ -1,19 +1,27 @@
 ---
 const packages = [
   {
-    tag: 'Agosto',
-    nome: 'Fim de Semana na Fazenda',
-    datas: '14 a 16 de agosto',
-    descricao: 'Desacelere no ritmo do campo: pensão completa, piscina e trilhas para recarregar as energias em família.',
-    badge: 'Escapada Rural',
+    tag: 'Setembro',
+    nome: 'Feriado da Independência',
+    datas: '4 a 7 de setembro',
+    descricao: 'Três noites de feriado prolongado no campo: pensão completa, piscina e trilhas para a família toda relaxar.',
+    badge: 'Feriado 7 de Setembro',
     highlight: true,
   },
   {
-    tag: 'Agosto',
-    nome: 'Festival de Inverno',
-    datas: '21 a 23 de agosto',
-    descricao: 'Aproveite o inverno baiano com programação especial, noites frescas e o melhor da cultura regional em família.',
-    badge: 'Festival de Inverno',
+    tag: 'Setembro',
+    nome: 'Fim de Semana na Fazenda',
+    datas: '18 a 20 de setembro',
+    descricao: 'Desacelere no ritmo do campo: pensão completa, piscina e trilhas para recarregar as energias em família.',
+    badge: 'Escapada Rural',
+    highlight: false,
+  },
+  {
+    tag: 'Setembro',
+    nome: 'Fim de Semana na Fazenda',
+    datas: '25 a 27 de setembro',
+    descricao: 'Mais uma chance de fugir da cidade: natureza, lazer completo e comida de fazenda de sexta a domingo.',
+    badge: 'Escapada Rural',
     highlight: false,
   },
 ];
@@ -32,7 +40,7 @@ const packages = [
       </p>
     </div>
 
-    <div class="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {packages.map((pkg) => (
         <div
           class={`reveal flex flex-col rounded-2xl border overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.07)] transition-transform hover:-translate-y-1 ${
