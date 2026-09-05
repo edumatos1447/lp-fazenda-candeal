@@ -2,19 +2,11 @@
 const packages = [
   {
     tag: 'Setembro',
-    nome: 'Feriado da Independência',
-    datas: '4 a 7 de setembro',
-    descricao: 'Três noites de feriado prolongado no campo: pensão completa, piscina e trilhas para a família toda relaxar.',
-    badge: 'Feriado 7 de Setembro',
-    highlight: true,
-  },
-  {
-    tag: 'Setembro',
     nome: 'Fim de Semana na Fazenda',
     datas: '18 a 20 de setembro',
     descricao: 'Desacelere no ritmo do campo: pensão completa, piscina e trilhas para recarregar as energias em família.',
     badge: 'Escapada Rural',
-    highlight: false,
+    highlight: true,
   },
   {
     tag: 'Setembro',
@@ -40,7 +32,7 @@ const packages = [
       </p>
     </div>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
       {packages.map((pkg) => (
         <div
           class={`reveal flex flex-col rounded-2xl border overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.07)] transition-transform hover:-translate-y-1 ${

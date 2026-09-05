@@ -23,21 +23,6 @@ export interface Period {
 
 export const periodos: Period[] = [
   {
-    periodo_id: 'feriado-independencia-set-2026',
-    nome: 'Feriado da Independência',
-    tipo: 'feriado',
-    data_entrada: '2026-09-04',
-    hora_entrada: '14:00',
-    data_saida: '2026-09-07',
-    hora_saida: '12:00',
-    num_diarias: 3,
-    preco_casal_standard: 972,
-    preco_casal_mezanino: 1079,
-    preco_crianca: 218,
-    preco_extra: 364,
-    vagas_disponiveis: 8,
-  },
-  {
     periodo_id: 'fim-de-semana-fazenda-set-18-2026',
     nome: 'Fim de Semana na Fazenda',
     tipo: 'fim_de_semana',
