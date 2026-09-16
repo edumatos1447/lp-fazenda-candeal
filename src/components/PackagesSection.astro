@@ -8,14 +8,6 @@ const packages = [
     badge: 'Escapada Rural',
     highlight: true,
   },
-  {
-    tag: 'Setembro',
-    nome: 'Fim de Semana na Fazenda',
-    datas: '25 a 27 de setembro',
-    descricao: 'Mais uma chance de fugir da cidade: natureza, lazer completo e comida de fazenda de sexta a domingo.',
-    badge: 'Escapada Rural',
-    highlight: false,
-  },
 ];
 ---
 
@@ -32,7 +24,7 @@ const packages = [
       </p>
     </div>
 
-    <div class="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+    <div class="grid gap-6 max-w-md mx-auto">
       {packages.map((pkg) => (
         <div
           class={`reveal flex flex-col rounded-2xl border overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.07)] transition-transform hover:-translate-y-1 ${
