@@ -9,6 +9,8 @@ interface ImportMetaEnv {
   readonly PUBLIC_GOOGLE_ADS_ID: string;
   readonly PUBLIC_DAYUSE_PAYMENT_URL: string;
   readonly PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL: string;
+  readonly PUBLIC_TRACKER_SCRIPT_URL: string;
+  readonly PUBLIC_TRACKER_KEY: string;
 }
 
 interface Window {

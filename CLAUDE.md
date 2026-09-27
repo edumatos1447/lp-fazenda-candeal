@@ -33,6 +33,8 @@ Copie `.env.example` para `.env` e preencha:
 | `PUBLIC_META_PIXEL_ID` | Não | ID do Meta Pixel (seção de tracking em `Layout.astro`) |
 | `PUBLIC_GOOGLE_ADS_ID` | Não | Measurement ID GA4/Google Ads (ex: `G-XXXX`) |
 | `PUBLIC_DAYUSE_PAYMENT_URL` | Não | URL do gateway de pagamento Day Use (vazio = botão oculto) |
+| `PUBLIC_TRACKER_SCRIPT_URL` | Não | URL do script de rastreamento `t.js` (vazio = script não carregado) |
+| `PUBLIC_TRACKER_KEY` | Não | Chave `data-key` do script de rastreamento |
 
 ## Tech Stack
 

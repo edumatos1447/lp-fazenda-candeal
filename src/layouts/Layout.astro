@@ -8,6 +8,8 @@ const {
 } = Astro.props;
 
 const metaPixelId = import.meta.env.PUBLIC_META_PIXEL_ID;
+const trackerScriptUrl = import.meta.env.PUBLIC_TRACKER_SCRIPT_URL;
+const trackerKey = import.meta.env.PUBLIC_TRACKER_KEY;
 ---
 
 <!doctype html>
@@ -50,6 +52,9 @@ const metaPixelId = import.meta.env.PUBLIC_META_PIXEL_ID;
         </noscript>
         <!-- End Meta Pixel Code -->
       </>
+    )}
+    {trackerScriptUrl && trackerKey && (
+      <script is:inline async src={trackerScriptUrl} data-key={trackerKey}></script>
     )}
   </head>
   <body class="bg-bg font-sans">
