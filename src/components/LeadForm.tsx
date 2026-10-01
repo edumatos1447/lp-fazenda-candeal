@@ -431,6 +431,11 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
   const hotelariaPeriods = periods.filter((p) => p.tipo !== 'day_use');
   const dayUsePeriods = generateDayUseSlots(hotelariaPeriods);
   const activePeriods = category === 'hotelaria' ? hotelariaPeriods : dayUsePeriods;
+  // A lista abaixo do calendário acompanha o mês exibido (pela data de entrada)
+  const monthPeriods = activePeriods.filter((p) => {
+    const d = new Date(p.data_entrada + 'T12:00:00');
+    return d.getFullYear() === viewYear && d.getMonth() === viewMonth;
+  });
 
   // Carrega períodos disponíveis ao montar
   useEffect(() => {
@@ -751,12 +756,17 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
                       </span>
                     )}
                   </div>
-                  {!selectedPeriodId && (
+                  {!selectedPeriodId && monthPeriods.length > 0 && (
                     <p className="text-xs text-[#b7791f] bg-[#b7791f]/10 border border-[#b7791f]/30 rounded-lg px-3 py-2 mb-2">
                       Selecione abaixo a data do pacote que deseja reservar.
                     </p>
                   )}
-                  {activePeriods.map((p) => {
+                  {monthPeriods.length === 0 && (
+                    <p className="text-xs text-gray-500 text-center py-3">
+                      Nenhum pacote neste mês. Use as setas do calendário para ver outras datas.
+                    </p>
+                  )}
+                  {monthPeriods.map((p) => {
                     const isSelected = p.periodo_id === selectedPeriodId;
                     return (
                       <button
