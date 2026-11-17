@@ -526,7 +526,10 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
     if (!nome || !telefone || partialSent || !apiBase) return;
     setPartialSent(true);
 
-    const utms = window.__utms ?? {};
+    // A API do CRM só conhece estes três campos; não mandar os demais para
+    // não arriscar rejeição por campo desconhecido.
+    const { utm_source, utm_medium, utm_campaign } = window.__utms ?? {};
+    const utms = { utm_source, utm_medium, utm_campaign };
 
     fetch(`${apiBase}/api/leads-parciais`, {
       method: 'POST',

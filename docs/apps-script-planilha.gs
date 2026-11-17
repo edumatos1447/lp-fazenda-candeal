@@ -34,7 +34,10 @@ var CAMPOS = {
   'Restrições':       function (d) { return d.restricoes; },
   'UTM Source':       function (d) { return d.utm_source; },
   'UTM Medium':       function (d) { return d.utm_medium; },
-  'UTM Campaign':     function (d) { return d.utm_campaign; }
+  'UTM Campaign':     function (d) { return d.utm_campaign; },  // Meta: nome da campanha
+  'Conjunto':         function (d) { return d.utm_term; },      // Meta: nome do conjunto
+  'Anúncio':          function (d) { return d.utm_content; },   // Meta: nome do anúncio
+  'ID da Campanha':   function (d) { return d.utm_id; }
 };
 
 var ORDEM = [
@@ -42,7 +45,8 @@ var ORDEM = [
   'Período', 'Entrada', 'Saída', 'Diárias',
   'Adultos', 'Crianças', 'Idades Crianças',
   'Acomodação', 'Observações', 'Restrições',
-  'UTM Source', 'UTM Medium', 'UTM Campaign'
+  'UTM Source', 'UTM Medium', 'UTM Campaign',
+  'Conjunto', 'Anúncio', 'ID da Campanha'
 ];
 
 // Rótulos legíveis para o campo `tipo` enviado pela LP.

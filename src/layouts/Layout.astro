@@ -60,14 +60,33 @@ const trackerKey = import.meta.env.PUBLIC_TRACKER_KEY;
   <body class="bg-bg font-sans">
     <slot />
 
-    <!-- Captura de UTMs -->
+    <!-- Captura de UTMs
+         Meta Ads: utm_campaign = campanha, utm_term = conjunto,
+         utm_content = anúncio, utm_id = ID da campanha.
+         Último clique vence: UTMs na URL substituem as salvas. Sem UTMs na
+         URL (visitante voltou depois, direto), usa as salvas por até 30 dias. -->
     <script>
+      const CHAVES = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'utm_id'];
+      const STORAGE_KEY = 'candeal_utms';
+      const VALIDADE_MS = 30 * 24 * 60 * 60 * 1000;
+
       const p = new URLSearchParams(window.location.search);
-      window.__utms = {
-        utm_source: p.get('utm_source'),
-        utm_medium: p.get('utm_medium'),
-        utm_campaign: p.get('utm_campaign'),
-      };
+      const daUrl: Record<string, string | null> = {};
+      for (const k of CHAVES) daUrl[k] = p.get(k);
+
+      let utms = daUrl;
+      try {
+        if (CHAVES.some((k) => daUrl[k])) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ salvoEm: Date.now(), utms: daUrl }));
+        } else {
+          const salvo = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+          if (salvo && Date.now() - salvo.salvoEm < VALIDADE_MS) utms = salvo.utms;
+        }
+      } catch {
+        // storage bloqueado (aba anônima etc.): fica só com o que veio na URL
+      }
+
+      window.__utms = utms;
     </script>
 
     <CookieBanner />
