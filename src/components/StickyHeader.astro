@@ -1,6 +1,9 @@
 ---
 const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER || '5571999990000';
 const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('[Site] Olá! Gostaria de saber mais sobre a Fazenda Hotel Candeal.')}`;
+
+// Teste: botão de WhatsApp do header desligado. Para voltar, troque para true.
+const MOSTRAR_WHATSAPP = false;
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border shadow-sm">
@@ -21,6 +24,7 @@ const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('[Site]
     </a>
 
     <!-- CTA -->
+    {MOSTRAR_WHATSAPP && (
     <a
       href={waUrl}
       target="_blank"
@@ -34,6 +38,7 @@ const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('[Site]
       <span class="hidden sm:inline">Falar pelo WhatsApp</span>
       <span class="sm:hidden">WhatsApp</span>
     </a>
+    )}
   </div>
 </header>
 
