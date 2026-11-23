@@ -1,5 +1,8 @@
-// ─── Configuração de períodos disponíveis ─────────────────────────────────────
-// Edite este arquivo para adicionar, remover ou alterar as datas disponíveis.
+// ─── Datas de RESERVA (fallback) ──────────────────────────────────────────────
+// As datas da LP vêm da aba "Datas" da planilha de leads, editada pelo dono do
+// hotel (ver docs/apps-script-planilha.gs). Esta lista só aparece se a planilha
+// não responder. Mantenha-a mais ou menos em dia, mas ela não precisa de deploy
+// a cada mudança de data. Datas que já começaram são escondidas sozinhas.
 //
 // tipo: 'feriado' | 'fim_de_semana' | 'temporada' (usado só para exibição interna)
 // preco_casal_standard / preco_casal_mezanino: use 0 para não exibir preço

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Period } from '../data/periodos';
+import { carregarDatasDaPlanilha, hojeIso } from '../lib/datasPlanilha';
 
 type TipoAcomodacao = 'standard' | 'mezanino_bangalo' | 'sem_preferencia';
 type FormStatus = 'idle' | 'loading' | 'success' | 'error' | 'no_vacancies';
@@ -437,9 +438,13 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
     return d.getFullYear() === viewYear && d.getMonth() === viewMonth;
   });
 
-  // Carrega períodos disponíveis ao montar
+  // Carrega períodos disponíveis ao montar.
+  // Ordem: aba "Datas" da planilha → datas fixas de periodos.ts → API do CRM.
   useEffect(() => {
+    let cancelado = false;
+
     const loadPeriods = (data: Period[]) => {
+      if (cancelado) return;
       setPeriods(data);
       const firstHotelaria = data.find((p) => p.tipo !== 'day_use');
       const firstPeriod = firstHotelaria ?? data[0];
@@ -451,22 +456,39 @@ export default function LeadForm({ apiBase, whatsappNumber, sheetsWebhookUrl, st
       setPeriodsLoading(false);
     };
 
-    if (staticPeriods && staticPeriods.length > 0) {
-      loadPeriods(staticPeriods);
-      return;
-    }
+    // Fallback: datas fixas no código, sem as que já começaram
+    const hoje = hojeIso();
+    const fixas = (staticPeriods ?? []).filter((p) => p.data_entrada >= hoje);
 
-    if (!apiBase) {
-      setPeriodsLoading(false);
-      return;
-    }
+    (async () => {
+      if (sheetsWebhookUrl) {
+        const daPlanilha = await carregarDatasDaPlanilha(sheetsWebhookUrl);
+        if (cancelado) return;
+        if (daPlanilha) {
+          loadPeriods(daPlanilha);
+          return;
+        }
+      }
 
-    fetch(`${apiBase}/api/periodos/disponiveis`)
-      .then((r) => r.json())
-      .then((data: Period[]) => loadPeriods(data))
-      .catch(() => setPeriodsError(true))
-      .finally(() => setPeriodsLoading(false));
-  }, [apiBase, staticPeriods]);
+      if (fixas.length > 0) {
+        loadPeriods(fixas);
+        return;
+      }
+
+      if (!apiBase) {
+        setPeriodsLoading(false);
+        return;
+      }
+
+      fetch(`${apiBase}/api/periodos/disponiveis`)
+        .then((r) => r.json())
+        .then((data: Period[]) => loadPeriods(data))
+        .catch(() => { if (!cancelado) setPeriodsError(true); })
+        .finally(() => { if (!cancelado) setPeriodsLoading(false); });
+    })();
+
+    return () => { cancelado = true; };
+  }, [apiBase, staticPeriods, sheetsWebhookUrl]);
 
   // Escuta evento disparado pelos botões "Reservar quarto X" da seção de acomodações
   useEffect(() => {

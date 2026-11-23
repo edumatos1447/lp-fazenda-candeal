@@ -69,7 +69,7 @@ src/
 
 ## LeadForm.tsx — fluxo de dados
 
-1. **Mount** → `GET ${PUBLIC_API_BASE_URL}/api/periodos/disponiveis` → popula seletor de períodos
+1. **Mount** → datas de reserva, nesta ordem: aba **"Datas"** da planilha (`GET ${PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL}?acao=datas`, via `src/lib/datasPlanilha.ts`, timeout 6s) → se falhar, `src/data/periodos.ts` (só datas futuras) → se vazio, `GET ${PUBLIC_API_BASE_URL}/api/periodos/disponiveis`. Lista vazia da planilha é respeitada (dono tirou tudo), não cai no fallback.
 2. **onBlur(telefone)** (após nome preenchido, uma vez) → `POST /api/leads-parciais` silencioso com UTMs de `window.__utms`
 3. **Submit** → `POST /api/reservas` → 201: abre `wa.me` com mensagem pré-preenchida + dispara eventos de conversão (`fbq`, `gtag`) → 409: "vagas esgotadas" → 500: link direto WA
 
@@ -93,6 +93,8 @@ Código versionado em `docs/apps-script-planilha.gs`. Monta cada linha a partir 
 Os POSTs usam `mode: 'no-cors'` — falhas são invisíveis no browser. Campo enviado que não tenha coluna correspondente é descartado em silêncio.
 
 Ao republicar: **Gerenciar implantações > editar > Nova versão** (uma implantação nova gera outra URL e quebra `PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL`).
+
+**Datas de hotelaria** são editadas pelo dono do hotel na aba **"Datas"** da mesma planilha (Pacote, Entrada, Saída, 4 preços, Vagas, Ativo) e servidas pelo `doGet?acao=datas`. Mudança de data **não precisa de deploy**. A aba é criada uma vez rodando `criarAbaDatas()` no editor. Leads vão para a primeira aba que não é "Datas" (`abaDeLeads_`). `src/components/PackagesSection.astro` não está na página (cards antigos, fora do `index.astro`).
 
 ## UTM Capture
 
